@@ -1,8 +1,10 @@
 {
   "name": "neapolitan-output-mdx",
   "description": "MDX output plugin for Neapolitan",
-  "keywords": ["neapolitan-plugin"],
-  "version": "0.0.0",
+  "keywords": [
+    "neapolitan-plugin"
+  ],
+  "version": "0.1.0-canary.0",
   "license": "BSD-2-Clause",
   "repository": {
     "type": "git",
