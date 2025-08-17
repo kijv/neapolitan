@@ -5,6 +5,12 @@
     "neapolitan-plugin"
   ],
   "version": "0.1.0-canary.0",
+  "license": "BSD-2-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kijv/neapolitan.git",
+    "directory": "packages/neapolitan-output-mdx"
+  },
   "publishConfig": {
     "access": "public"
   },
