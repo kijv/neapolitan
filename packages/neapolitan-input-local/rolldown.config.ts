@@ -13,23 +13,13 @@ const src = path.join(import.meta.dirname, 'src')
 
 const input = await getInput(exports, src)
 
-const external = [/@mdx-js\/mdx*/]
-
 const baseConfig = defineConfig({
   input,
   output: {
     ...createOutput('dist', exports, import.meta.dirname, src),
     format: 'esm',
-    advancedChunks: {
-      groups: [
-        {
-          test: /node_modules/,
-          name: 'compiled',
-        },
-      ],
-    },
   },
-  external: [...NODE_EXTERNAL, ...external],
+  external: NODE_EXTERNAL
 })
 
 export default defineConfig([

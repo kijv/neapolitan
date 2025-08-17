@@ -1,5 +1,7 @@
 {
   "name": "neapolitan-input-local",
+  "description": "Local input plugin for Neapolitan",
+  "keywords": ["neapolitan-plugin"],
   "version": "0.0.0",
   "publishConfig": {
     "access": "public"

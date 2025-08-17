@@ -1,5 +1,6 @@
 {
   "name": "neapolitan",
+  "description": "Content management tooling",
   "version": "0.0.0",
   "publishConfig": {
     "access": "public"

@@ -1,22 +1,14 @@
-import type { GeneralHookFilter, ModuleType } from 'rolldown'
-import type { PluginBase, SourceDescription } from '..'
+import type { ModuleType } from 'rolldown'
+import type { PluginBase, SourceResult } from '..'
 import { createPluginContainer } from './container'
-import type { MaybePromise, NullValue, Prettify } from '../declaration'
+import type { MaybePromise, Prettify } from '../declaration'
 import { neapolitanError } from '../util'
-
-export interface CommonInputOptions {
-  root?: string
-  dir: string
-  filter?: GeneralHookFilter
-}
 
 export interface SlugDescription {
   id: string
   slug: string
   moduleType: ModuleType
 }
-
-export type SourceResult = NullValue | string | SourceDescription
 
 export type InputLoadHook = (id: string) => MaybePromise<SourceResult>
 

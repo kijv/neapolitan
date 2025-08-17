@@ -40,7 +40,6 @@ jobs:
   start:
     if: github.repository_owner == 'kijv'
     runs-on: ubuntu-latest
-
     environment: release-${{ github.event.inputs.releaseType }}
     steps:
       - name: Setup node
@@ -63,7 +62,7 @@ jobs:
       - name: Check token
         run: gh auth status
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_BOT_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get commit of the latest tag
         run: echo "LATEST_TAG_COMMIT=$(git rev-list -n 1 $(git describe --tags --abbrev=0))" >> $GITHUB_ENV
@@ -92,5 +91,5 @@ jobs:
         with:
           version: bun run ci:version
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_BOT_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_TYPE: ${{ github.event.inputs.releaseType }}

@@ -1,6 +1,8 @@
 import { createCompiler, type Compiler, type CompilerOptions } from './compiler'
 import type { Output } from 'neapolitan'
 
+export { pluginOption } from './util'
+
 export interface MdxOutputOptions {
   compiler?: CompilerOptions
 }

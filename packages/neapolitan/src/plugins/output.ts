@@ -3,10 +3,7 @@ import type { PluginBase, SourceDescription } from '..'
 import { createPluginContainer } from './container'
 import type { MaybePromise, NullValue, Prettify } from '../declaration'
 
-export type OutputTransformResult<O = {}> =
-  | NullValue
-  | string
-  | (SourceDescription & O)
+export type SourceResult<O = {}> = NullValue | string | (SourceDescription & O)
 
 export type OutputTransformHook<Data> = (
   slugs: string[],
@@ -15,7 +12,7 @@ export type OutputTransformHook<Data> = (
     moduleType: ModuleType
   }
 ) => MaybePromise<
-  OutputTransformResult<
+  SourceResult<
     Data extends {}
       ? {
           data: MaybePromise<Data>

@@ -77,6 +77,8 @@ jobs:
     permissions:
       contents: write
       id-token: write
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN_ELEVATED }}
     steps:
       - name: Setup node
         uses: actions/setup-node@v4
@@ -105,6 +107,7 @@ jobs:
             ${{ github.sha }}-${{ github.run_number }}-${{ github.run_attempt }}
 
       - run: bun install -g npm@latest
+      - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
 
       - name: Publish to NPM
         if: ${{ needs.changes.outputs.is-release == 'true' }}
@@ -113,7 +116,8 @@ jobs:
         with:
           publish: bun run ci:publish
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_BOT_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN_ELEVATED }}
 
       - name: Upload npm log artifact
         if: steps.changesets.outputs.published == 'true'

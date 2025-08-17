@@ -51,30 +51,26 @@ export const generateNeapolitanInputCode = async (
   const input = await getInput()
   const slugs = await input.slugs.collect()
 
-  // TODO use "subtrees" instead of "i18n"
-  const i18n = resolvedConfig.i18n
-    ? Object.entries(resolvedConfig.i18n.locales).map(
-        ([language, { filter: generalHookFilter, ...rest }]) => ({
-          ...rest,
-          language,
-          filter: (id: string) => {
-            return interpreter(
-              generalHookFilterMatcherToFilterExprs(generalHookFilter, 'id')!,
-              undefined,
-              id
-            )
-          },
-        })
-      )
-    : undefined
+  const subtrees = Object.entries(resolvedConfig.splitting ?? {}).map(
+    ([key, { filter, modifySlug }]) => ({
+      key,
+      filter: (id: string) =>
+        interpreter(
+          generalHookFilterMatcherToFilterExprs(filter, 'id')!,
+          undefined,
+          id
+        ),
+      modifySlug,
+    })
+  )
 
   return [
     'import { createTree } from "neapolitan/tree";',
     'const data = Object.freeze([',
     ...slugs.map(({ slug, moduleType }) => {
-      const locale = i18n?.find((l) => l.filter(slug))
+      const subtree = subtrees?.find((l) => l.filter(slug))
 
-      return `\t{ tree: ${locale?.language ? JSON.stringify(locale.language) : 'undefined'}, key: ${JSON.stringify(locale?.modifySlug ? locale.modifySlug(slug) : slug)}, value: () => import(${JSON.stringify(formatImport(slug, moduleType))}).then(m => m.default) },`
+      return `\t{ tree: ${subtree?.key ? JSON.stringify(subtree.key) : 'undefined'}, key: ${JSON.stringify(subtree?.modifySlug ? subtree.modifySlug(slug) : slug)}, value: () => import(${JSON.stringify(formatImport(slug, moduleType))}).then(m => m.default) },`
     }),
     ']);',
     'export const tree = createTree(data);',

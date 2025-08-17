@@ -6,19 +6,17 @@ import type { Falsy, PluginBase } from './plugin'
 export interface NeapolitanConfig {
   input: InputOption
   output?: OutputOption
-  i18n?: {
-    defaultLanguage?: string
-    locales: {
-      [Language: string]: {
-        filter: GeneralHookFilter
-        modifySlug?: (slug: string) => string
-      }
+  splitting?: Record<
+    string,
+    {
+      filter: GeneralHookFilter
+      modifySlug?: (slug: string) => string
     }
-  }
+  >
 }
 
 export interface ResolvedNeapolitanConfig
-  extends Pick<NeapolitanConfig, 'i18n'> {
+  extends Pick<NeapolitanConfig, 'splitting'> {
   input: Input[]
   output?: Output[]
 }
@@ -44,7 +42,7 @@ export function sortUserPlugins<const T extends PluginBase>(
 export const resolvePlugin = async <const P extends PluginBase>(
   plugins: PluginOption<P>
 ): Promise<P[]> => {
-  const filterPlugin = <T extends PluginBase<any>>(p: T | Falsy): p is T => {
+  const filterPlugin = <T extends PluginBase>(p: T | Falsy): p is T => {
     if (!p) {
       return false
     }
@@ -70,8 +68,6 @@ export const resolveNeapolitanConfig = async <const T extends NeapolitanConfig>(
     input,
     output,
   }
-
-  // Object.assign(resolved, createPluginHookUtils(resolved.plugins))
 
   return resolved
 }

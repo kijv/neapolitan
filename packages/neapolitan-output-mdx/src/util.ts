@@ -13,11 +13,6 @@ export const resolveOptions = ({
     ...options,
     remarkPlugins: pluginOption(
       (v) => [
-        // remarkGfm,
-        // remarkFrontmatter,
-        // remarkMdxFrontmatter,
-        // [remarkHeading, mdxOptions.remarkHeadingOptions],
-        // [remarkStructure, mdxOptions.remarkStructureOptions],
         ...v,
         [
           remarkMdxExport,
@@ -28,30 +23,14 @@ export const resolveOptions = ({
       ],
       options.remarkPlugins
     ),
-    rehypePlugins: pluginOption(
-      (v) => [
-        ...v,
-        // mdxOptions.rehypeCodeOptions !== false && [
-        //   rehypeCode,
-        //   mdxOptions.rehypeCodeOptions,
-        // ],
-        // [
-        //   rehypeImgSize,
-        //   {
-        //     dir: mdxOptions.imageDir ?? './public',
-        //   } satisfies RehypeImgSizeOptions,
-        //   ...v,
-        // ],
-      ],
-      options.rehypePlugins
-    ),
+    rehypePlugins: pluginOption((v) => [...v], options.rehypePlugins),
   }
 }
 
-function pluginOption(
+export const pluginOption = (
   def: (v: Pluggable[]) => (Pluggable | false)[],
   options: ResolvePlugins = []
-): Pluggable[] {
+): Pluggable[] => {
   const list = def(Array.isArray(options) ? options : []).filter(
     Boolean
   ) as Pluggable[]

@@ -1,12 +1,40 @@
-import { createFilter } from '@rollup/pluginutils'
+import { createFilter, type FilterPattern } from '@rollup/pluginutils'
 import { packageDirectorySync } from 'package-directory'
 import path from 'node:path'
 import { collectFiles } from './util'
-import type { CommonInputOptions, InputOption, ModuleType } from 'neapolitan'
+import type { InputOption, ModuleType } from 'neapolitan'
 import fs from 'node:fs/promises'
+import type { GeneralHookFilter } from 'rolldown'
 
-export interface LocalInputOptions extends CommonInputOptions {
-  idToSlug?: (id: string) => string
+export interface LocalInputOptions {
+  root?: string
+  dir: string
+  filter?: GeneralHookFilter
+}
+
+const normalizeFilter = (filter: GeneralHookFilter | undefined): {
+  include?: FilterPattern
+  exclude?: FilterPattern
+} => {
+  if (filter instanceof RegExp) {
+    return {
+      include: filter,
+    }
+  }
+
+  if (typeof filter === 'object' && !Array.isArray(filter)) {
+    return filter
+  }
+
+  if (Array.isArray(filter)) {
+    return {
+      include: filter,
+    }
+  }
+
+  return {
+    include: filter ?? '**/*',
+  }
 }
 
 export const local = (options: LocalInputOptions): InputOption => {
@@ -14,19 +42,11 @@ export const local = (options: LocalInputOptions): InputOption => {
   const root = options.root ? path.relative(cwd, options.root) : cwd
   const dir = path.relative(root, options.dir)
 
+  const filter = normalizeFilter(options.filter)
+
   const idFilter = createFilter(
-    options.filter != null
-      ? typeof options.filter === 'object' &&
-        !Array.isArray(options.filter) &&
-        'include' in options.filter
-        ? options.filter.include
-        : Array.isArray(options.filter)
-          ? options.filter
-          : undefined
-      : '**/*',
-    typeof options.filter === 'object' && 'exclude' in options.filter
-      ? options.filter.exclude
-      : [],
+    filter.include,
+    filter.exclude,
     {
       resolve: dir,
     }
@@ -51,17 +71,15 @@ export const local = (options: LocalInputOptions): InputOption => {
     return (collectedFiles = files)
   }
 
-  const idToSlug =
-    options.idToSlug ??
-    ((id: string) => {
-      const ext = path.extname(id)
-      const slug =
-        path.basename(id, ext) === 'index'
-          ? path.dirname(id)
-          : id.slice(0, -ext.length)
+  const idToSlug = (id: string) => {
+    const ext = path.extname(id)
+    const slug =
+      path.basename(id, ext) === 'index'
+        ? path.dirname(id)
+        : id.slice(0, -ext.length)
 
-      return slug === '.' ? '' : slug
-    })
+    return slug === '.' ? '' : slug
+  }
 
   return {
     name: 'neapolitan:local',
