@@ -32,7 +32,7 @@ export default async function loader(
         null,
         typeof result === 'object' && result != null ? result.code : result
       )
-      return;
+      return
     }
   }
 
