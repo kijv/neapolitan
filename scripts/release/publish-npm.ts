@@ -65,14 +65,14 @@ async function publishNpm() {
     throw new Error('NPM_TOKEN is not set')
   }
 
+
   const packagesDir = join(process.cwd(), 'packages')
   const packageDirs = await readdir(packagesDir, {
     withFileTypes: true,
   })
 
-  for await (const packageDir of packageDirs.filter(
-    (d) => d.name !== 'next-font'
-  )) {
+
+  for await (const packageDir of packageDirs) {
     if (!packageDir.isDirectory()) {
       continue
     }
@@ -81,7 +81,7 @@ async function publishNpm() {
       await readFile(
         join(process.cwd(), 'packages', packageDir.name, 'package.json'),
         'utf-8'
-      ).toString()
+      ) as unknown as string
     )
 
     if (pkgJson.private) {
@@ -91,7 +91,7 @@ async function publishNpm() {
     const tags = await fetchTagsFromRegistry(pkgJson.name)
     // If the current version is already published in the
     // registry, skip the process.
-    if (semver.eq(pkgJson.version, tags.latest)) {
+    if (typeof tags === 'object' && 'latest' in tags && semver.eq(pkgJson.version, tags.latest)) {
       console.log(
         `Skipping ${pkgJson.name}@${pkgJson.version} because it is already published.`
       )
