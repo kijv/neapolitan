@@ -47,7 +47,7 @@ export const createPluginContainer = <
 
   return {
     load: async (...args: Parameters<ExtractHandler<Plugin, 'load'>>) => {
-      for await (const plugin of utils.getSortedPlugins('load')) {
+      for (const plugin of utils.getSortedPlugins('load')) {
         const filter = getCachedFilterForPlugin(plugin, 'load')
         if (filter && filterArgs.load && !filter(...filterArgs.load(...args)))
           continue
@@ -64,7 +64,7 @@ export const createPluginContainer = <
     transform: async (
       ...args: Parameters<ExtractHandler<Plugin, 'transform'>>
     ) => {
-      for await (const plugin of utils.getSortedPlugins('transform')) {
+      for (const plugin of utils.getSortedPlugins('transform')) {
         const filter = getCachedFilterForPlugin(plugin, 'transform')
         if (
           filter &&

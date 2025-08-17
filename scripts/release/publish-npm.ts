@@ -70,7 +70,7 @@ async function publishNpm() {
     withFileTypes: true,
   })
 
-  for await (const packageDir of packageDirs) {
+  for (const packageDir of packageDirs) {
     if (!packageDir.isDirectory()) {
       continue
     }
@@ -116,4 +116,4 @@ async function publishNpm() {
   }
 }
 
-publishNpm()
+await publishNpm()

@@ -86,7 +86,7 @@ export const local = (options: LocalInputOptions): InputOption => {
         if (!slugsCache || force) {
           slugsCache = new Map()
 
-          for await (const id of await getFiles(force)) {
+          for (const id of await getFiles(force)) {
             const relative = path.relative(dir, id)
             const slug = idToSlug(relative)
             slugsCache.set(slug, {
@@ -116,7 +116,7 @@ export const local = (options: LocalInputOptions): InputOption => {
           }
         )
 
-        for await (const id of await getFiles()) {
+        for (const id of await getFiles()) {
           if (filter(path.relative(dir, id))) {
             const text = await fs.readFile(path.relative(cwd, id), {
               encoding: 'utf8',

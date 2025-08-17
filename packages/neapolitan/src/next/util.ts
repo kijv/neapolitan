@@ -80,7 +80,7 @@ export const cachedNeapolitanConfig = (() => {
         config == null ||
         (options?.configPath != null && options.configPath !== configPath)
       ) {
-        load(options)
+        await load(options)
       }
       if (!resolved && config != null) {
         resolved = resolveNeapolitanConfig(await config)

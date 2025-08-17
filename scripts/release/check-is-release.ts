@@ -30,4 +30,4 @@ const checkIsRelease = async () => {
   }
 }
 
-checkIsRelease()
+await checkIsRelease()
