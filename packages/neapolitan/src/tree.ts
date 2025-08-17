@@ -26,8 +26,8 @@ type FindKey<
   Tree extends Array<infer T>
     ? T extends { key: Key; tree?: Parent }
       ? T
-      : never
-    : never
+      : any
+    : any
 
 export type TreeProxy<Data extends RawTreeData> = {
   getValue: <const K extends string>(
@@ -36,7 +36,9 @@ export type TreeProxy<Data extends RawTreeData> = {
   setValue: (target: string, value: any) => boolean
   getTree: (target: string) => TreeProxy<RawTreeData> | undefined
   setTree: (target: string, tree?: Tree) => boolean
-  get: (target: string) => any | undefined
+  get: <const K extends string>(
+    target: K
+  ) => FindKey<Data, K>['value'] | TreeProxy<RawTreeData> | undefined
   load: <const T extends RawTreeData>(obj: T) => void
   toJSON: () => RawTreeData
 }

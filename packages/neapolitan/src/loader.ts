@@ -47,7 +47,7 @@ export const loader = async <const Options extends NeapolitanLoaderOptions>(
 
       const slugs =
         typeof preSlugs === 'string' ? preSlugs.split('/') : preSlugs
-      const slug = typeof slugs === 'string' ? preSlugs : slugs.join('/')
+      const slug = typeof slugs === 'string' ? slugs : slugs.join('/')
 
       const key = `${typeof subtree === 'string' && subtree?.length > 0 ? `${subtree}.` : ''}${slug}`
       const load = input.tree.get(key)

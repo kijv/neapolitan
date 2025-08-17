@@ -76,7 +76,7 @@ export const createInputContainer = (inputs: Input[]): InputContainer => {
       collect: async () => {
         const slugs = new Set<SlugDescription>()
 
-        for await (const input of inputs) {
+        for (const input of inputs) {
           try {
             for (const slug of await input.slugs.collect()) {
               slugs.add(slug)

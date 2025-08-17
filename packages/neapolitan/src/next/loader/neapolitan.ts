@@ -24,13 +24,14 @@ export default async function loader(
       const resolvedConfig = await cachedNeapolitanConfig.resolve(options)
       const { input: _input, output: _output, ...config } = resolvedConfig
 
-      return callback(
+      callback(
         null,
         dataToEsm(config, {
           namedExports: true,
           preferConst: true,
         })
       )
+      return
     }
 
     if (isInput || isSlug) {
@@ -44,7 +45,8 @@ export default async function loader(
             `neapolitan/next?slug=/${encodeURIComponent(slug)}&moduleType=${encodeURIComponent(moduleType)}`
         )
 
-        return callback(null, code)
+        callback(null, code)
+        return
       }
 
       if (isSlug) {
@@ -62,7 +64,8 @@ export default async function loader(
         )
 
         if (code) {
-          return callback(null, code)
+          callback(null, code)
+          return
         }
       }
     }
@@ -73,11 +76,13 @@ export default async function loader(
     const resolvedConfig = await cachedNeapolitanConfig.resolve(options)
     return createInputContainer(resolvedConfig.input)
   })
-  if (result)
-    return callback(
+  if (result) {
+    callback(
       null,
       typeof result === 'object' && result != null ? result.code : result
     )
+    return
+  }
 
-  return callback(null, undefined)
+  callback(null, undefined)
 }

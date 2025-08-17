@@ -17,7 +17,7 @@ export default async function loader(
   const resolvedOptions = await cachedNeapolitanConfig.resolve(
     this.getOptions()
   )
-  const resolvedInput = await createInputContainer(resolvedOptions.input)
+  const resolvedInput = createInputContainer(resolvedOptions.input)
 
   const loadHook = normalizeHook(resolvedInput.load)
 
@@ -28,12 +28,13 @@ export default async function loader(
     const result = await loadHook.handler(id)
 
     if (result) {
-      return callback(
+      callback(
         null,
         typeof result === 'object' && result != null ? result.code : result
       )
+      return;
     }
   }
 
-  return callback(null, code)
+  callback(null, code)
 }

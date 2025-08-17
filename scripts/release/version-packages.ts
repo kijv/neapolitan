@@ -89,4 +89,4 @@ async function versionPackages() {
   await Bun.$`bun install --frozen-lockfile`
 }
 
-versionPackages()
+await versionPackages()

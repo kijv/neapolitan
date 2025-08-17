@@ -76,8 +76,10 @@ export const createNeapolitan = (
                   if (
                     !request.request ||
                     !Object.keys(resolveAlias).includes(request.request)
-                  )
-                    return callback()
+                  ) {
+                    callback()
+                    return
+                  }
 
                   // construct the new request
                   const newRequest = {

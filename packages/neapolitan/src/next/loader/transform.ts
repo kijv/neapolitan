@@ -13,17 +13,22 @@ export default async function loader(
 
   const id = this.resource
 
-  if (!id) return callback(null, code)
+  if (!id) {
+    callback(null, code)
+    return
+  }
 
   const result = await transformAny(id, code, async () => {
     const resolvedConfig = await cachedNeapolitanConfig.resolve(options)
     return createInputContainer(resolvedConfig.input)
   })
-  if (result)
-    return callback(
+  if (result) {
+    callback(
       null,
       typeof result === 'object' && result != null ? result.code : result
     )
+    return
+  }
 
-  return callback(null, code)
+  callback(null, code)
 }
