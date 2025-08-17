@@ -17,6 +17,7 @@ Neapolitan requires the use of its Vite or Next.js plugin within the current app
 With Vite:
 
 vite.config.js
+
 ```js
 import { defineConfig } from 'vite'
 import neapolitan from 'neapolitan/vite'
@@ -26,15 +27,16 @@ export default defineConfig({
     neapolitan({
       input: [
         /* inputs */
-      ]
-    })
-  ]
+      ],
+    }),
+  ],
 })
 ```
 
 With Next.js:
 
 next.config.mjs
+
 ```js
 import createNeapolitan from 'neapolitan/next'
 
@@ -48,12 +50,13 @@ export default withNeapolitan(nextConfig)
 ```
 
 neapolitan.config.mjs
+
 ```js
 import { defineConfig } from 'neapolitan/next'
 
 export default defineConfig({
   input: [
     /* inputs */
-  ]
+  ],
 })
 ```

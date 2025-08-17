@@ -3,11 +3,7 @@ import { dts } from 'rolldown-plugin-dts'
 import { exports } from './package.json'
 import path from 'node:path'
 import { minify } from 'rollup-plugin-swc3'
-import {
-  createOutput,
-  NODE_EXTERNAL,
-  getInput,
-} from '../../rolldownutils.mjs'
+import { createOutput, NODE_EXTERNAL, getInput } from '../../rolldownutils.mjs'
 
 const src = path.join(import.meta.dirname, 'src')
 const input = await getInput(exports, src)

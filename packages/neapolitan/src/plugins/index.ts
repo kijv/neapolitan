@@ -1,7 +1,10 @@
 import { interpreter } from '@rolldown/pluginutils'
 import type { PluginBase, PluginWithRequiredHook } from '../plugin'
 import type { ObjectHook } from 'rolldown'
-import { loadFilterToFilterExprs, transformFilterToFilterExprs } from '../lib/hook-filter'
+import {
+  loadFilterToFilterExprs,
+  transformFilterToFilterExprs,
+} from '../lib/hook-filter'
 
 export type HookHandler<T> = T extends ObjectHook<infer H> ? H : T
 
@@ -20,7 +23,7 @@ export const getHookHandler = <T extends ObjectHook<Function>>(hook: T) => {
 
 export const extractFilter = <T extends Function, F>(
   hook: ObjectHook<T, { filter?: F }> | undefined
-): {} | undefined=> {
+): {} | undefined => {
   return hook && 'filter' in hook && hook.filter ? hook.filter : undefined
 }
 

@@ -17,8 +17,8 @@ import local from 'neapolitan-input-local'
     local({
       dir: 'content/docs',
       // root -- defaults to process.cwd()
-      // filter -- specify certain conditions for including/excluding files from property 'dir' 
-    })
+      // filter -- specify certain conditions for including/excluding files from property 'dir'
+    }),
   ]
 }
 ```

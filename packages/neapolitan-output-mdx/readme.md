@@ -16,7 +16,7 @@ import mdx from 'neapolitan-output-mdx'
   output: [
     mdx({
       // compiler -- pass additional options to the MDX compiler
-    })
+    }),
   ]
 }
 ```

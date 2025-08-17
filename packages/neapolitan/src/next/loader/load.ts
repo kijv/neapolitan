@@ -14,7 +14,9 @@ export default async function loader(
 
   const id = this.resource
 
-  const resolvedOptions = await cachedNeapolitanConfig.resolve(this.getOptions())
+  const resolvedOptions = await cachedNeapolitanConfig.resolve(
+    this.getOptions()
+  )
   const resolvedInput = await createInputContainer(resolvedOptions.input)
 
   const loadHook = normalizeHook(resolvedInput.load)

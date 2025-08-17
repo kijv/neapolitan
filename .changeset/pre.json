@@ -6,8 +6,5 @@
     "neapolitan-input-local": "0.1.0-canary.0",
     "neapolitan-output-mdx": "0.1.0-canary.0"
   },
-  "changesets": [
-    "giant-bikes-add",
-    "major-dots-build"
-  ]
+  "changesets": ["giant-bikes-add", "major-dots-build"]
 }

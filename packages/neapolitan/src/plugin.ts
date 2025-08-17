@@ -68,4 +68,3 @@ export type PluginBase<
 export type PluginOption<T extends PluginBase<any>> = MaybePromise<
   T | Falsy | PluginOption<T>[]
 >
-

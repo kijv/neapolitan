@@ -40,7 +40,9 @@ async function versionPackages() {
       // Enter pre mode as "canary" tag.
       await Bun.$`bun run changeset pre enter canary`
 
-      console.log('▲   Preparing to bump the canary version, checking if there are any changesets.')
+      console.log(
+        '▲   Preparing to bump the canary version, checking if there are any changesets.'
+      )
 
       // Create an empty changeset for `next` to bump the canary version
       // even if there are no changesets for `next`.
@@ -49,7 +51,9 @@ async function versionPackages() {
       let anyHasChangeset = false
       const changesetStatusFile = Bun.file('./changeset-status.json')
       if (await changesetStatusFile.exists()) {
-        const changesetStatus: ChangesetStatusJson = JSON.parse(await changesetStatusFile.text())
+        const changesetStatus: ChangesetStatusJson = JSON.parse(
+          await changesetStatusFile.text()
+        )
 
         console.log('▲   Changeset Status:')
         console.log(changesetStatus)
