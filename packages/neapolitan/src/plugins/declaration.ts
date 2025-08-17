@@ -7,12 +7,6 @@ import type {
 import type { Output, OutputData } from '..'
 import type { PluginBase, PluginOption } from '../plugin'
 import type { AsyncFlatten } from '../util'
-import type {
-  Arraify,
-  ElementOf,
-  NullValue,
-  UnionToIntersection,
-} from '../declaration'
 
 export type PluginBaseConfig = {
   load?: {
