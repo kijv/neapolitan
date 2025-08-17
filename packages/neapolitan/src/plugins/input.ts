@@ -1,7 +1,7 @@
-import type { ModuleType } from 'rolldown'
-import type { PluginBase, SourceResult } from '..'
-import { createPluginContainer } from './container'
 import type { MaybePromise, Prettify } from '../declaration'
+import type { PluginBase, SourceResult } from '..'
+import type { ModuleType } from 'rolldown'
+import { createPluginContainer } from './container'
 import { neapolitanError } from '../util'
 
 export interface SlugDescription {
@@ -41,7 +41,6 @@ export interface Input
       filter: true
     }
   }> {
-  name: string
   slugs: Prettify<
     {
       collect: () => MaybePromise<Array<SlugDescription>>
@@ -77,7 +76,7 @@ export const createInputContainer = (inputs: Input[]): InputContainer => {
       collect: async () => {
         const slugs = new Set<SlugDescription>()
 
-        for (const input of inputs) {
+        for await (const input of inputs) {
           try {
             for (const slug of await input.slugs.collect()) {
               slugs.add(slug)

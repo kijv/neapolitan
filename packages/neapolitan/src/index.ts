@@ -1,8 +1,8 @@
 import type { ModuleType, SourceMapInput } from 'rolldown'
 import type { Input } from './plugins/input'
+import type { NullValue } from './declaration'
 import type { Output } from './plugins/output'
 import type { PluginOption } from './plugin'
-import type { NullValue } from './declaration'
 
 export interface SourceDescription {
   code: string

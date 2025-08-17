@@ -1,12 +1,12 @@
-import type { AsyncFlatten } from '../util'
-import type { PluginBase, PluginOption } from '../plugin'
-import type { Output, OutputData } from '..'
 import type {
   Arraify,
   ElementOf,
   NullValue,
   UnionToIntersection,
 } from '../declaration'
+import type { Output, OutputData } from '..'
+import type { PluginBase, PluginOption } from '../plugin'
+import type { AsyncFlatten } from '../util'
 
 export type PluginBaseConfig = {
   load?: {

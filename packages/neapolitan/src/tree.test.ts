@@ -1,5 +1,5 @@
 import { createTree, lazyTransformTree } from './tree'
-import { test, expect, describe } from 'bun:test'
+import { describe, expect, test } from 'bun:test'
 
 describe('createTree', () => {
   test('creates empty tree when no initial data provided', () => {

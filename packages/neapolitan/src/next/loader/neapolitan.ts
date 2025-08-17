@@ -1,13 +1,13 @@
-import type { LoaderContext } from 'webpack'
-import { cachedNeapolitanConfig } from '../util'
-import { dataToEsm } from '@rollup/pluginutils'
 import {
   generateNeapolitanInputCode,
   loadAny,
   resolveInputSource,
 } from '../../lib/plugin'
-import { createInputContainer } from '../../plugins/input'
+import type { LoaderContext } from 'webpack'
 import type { NeapolitanNextPluginOptions } from '..'
+import { cachedNeapolitanConfig } from '../util'
+import { createInputContainer } from '../../plugins/input'
+import { dataToEsm } from '@rollup/pluginutils'
 
 export default async function loader(
   this: LoaderContext<NeapolitanNextPluginOptions>
@@ -23,6 +23,7 @@ export default async function loader(
     if (isCtx) {
       const resolvedConfig = await cachedNeapolitanConfig.resolve(options)
       const { input: _input, output: _output, ...config } = resolvedConfig
+
       return callback(
         null,
         dataToEsm(config, {
@@ -59,7 +60,10 @@ export default async function loader(
           moduleType,
           () => createInputContainer(resolvedConfig.input)
         )
-        if (code) return callback(null, code)
+
+        if (code) {
+          return callback(null, code)
+        }
       }
     }
   }

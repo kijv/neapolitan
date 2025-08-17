@@ -1,9 +1,9 @@
+import { NODE_EXTERNAL, createOutput, getInput } from '../../rolldownutils.mjs'
 import { defineConfig } from 'rolldown'
 import { dts } from 'rolldown-plugin-dts'
 import { exports } from './package.json'
-import path from 'node:path'
 import { minify } from 'rollup-plugin-swc3'
-import { createOutput, NODE_EXTERNAL, getInput } from '../../rolldownutils.mjs'
+import path from 'node:path'
 
 const src = path.join(import.meta.dirname, 'src')
 const input = await getInput(exports, src)
@@ -14,7 +14,7 @@ const baseConfig = defineConfig({
     ...createOutput('dist', exports, import.meta.dirname, src),
     format: 'esm',
   },
-  external: [...NODE_EXTERNAL, 'c12'],
+  external: [...NODE_EXTERNAL, 'c12', 'neapolitan-ctx', 'neapolitan-input'],
 })
 
 export default defineConfig([

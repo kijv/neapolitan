@@ -1,8 +1,8 @@
 import type { LoaderContext } from 'webpack'
+import type { NeapolitanNextPluginOptions } from '..'
 import { cachedNeapolitanConfig } from '../util'
 import { createInputContainer } from '../../plugins/input'
 import { transformAny } from '../../lib/plugin'
-import type { NeapolitanNextPluginOptions } from '..'
 
 export default async function loader(
   this: LoaderContext<NeapolitanNextPluginOptions>,
@@ -12,6 +12,8 @@ export default async function loader(
   const callback = this.async()
 
   const id = this.resource
+
+  if (!id) return callback(null, code)
 
   const result = await transformAny(id, code, async () => {
     const resolvedConfig = await cachedNeapolitanConfig.resolve(options)

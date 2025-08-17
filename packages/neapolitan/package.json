@@ -30,6 +30,10 @@
       "types": "./dist/loaderutils.d.ts",
       "default": "./dist/loaderutils.js"
     },
+    "./loader": {
+      "types": "./dist/loader.d.ts",
+      "default": "./dist/loader.js"
+    },
     "./next": {
       "types": "./dist/next.d.ts",
       "default": "./dist/next.js"
@@ -68,7 +72,19 @@
     "rolldown-plugin-dts": "catalog:bundler",
     "rollup": "^4.46.2",
     "rollup-plugin-swc3": "catalog:bundler",
-    "vite": "^7.1.2",
+    "vite": "^7",
     "webpack": "^5.101.2"
+  },
+  "peerDependencies": {
+    "next": "^15.4.6",
+    "vite": "^7"
+  },
+  "peerDependenciesMeta": {
+    "next": {
+      "optional": true
+    },
+    "vite": {
+      "optional": true
+    }
   }
 }

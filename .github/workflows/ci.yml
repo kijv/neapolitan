@@ -28,7 +28,7 @@ jobs:
         run: bun install
 
       - name: Lint
-        run: bun run lint --deny-warnings
+        run: bun run lint --type-aware --deny-warnings
 
       - name: Check formatting
         run: bun run format:check

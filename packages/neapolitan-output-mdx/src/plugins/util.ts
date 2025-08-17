@@ -1,5 +1,5 @@
-import { valueToEstree } from 'estree-util-value-to-estree'
 import type { RootContent } from 'mdast'
+import { valueToEstree } from 'estree-util-value-to-estree'
 
 export function flattenNode(node: RootContent): string {
   if ('children' in node)

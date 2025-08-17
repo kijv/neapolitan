@@ -1,7 +1,7 @@
-import type { ModuleType } from 'rolldown'
-import type { PluginBase, SourceResult } from '..'
-import { createPluginContainer } from './container'
 import type { MaybePromise, Prettify } from '../declaration'
+import type { PluginBase, SourceResult } from '..'
+import type { ModuleType } from 'rolldown'
+import { createPluginContainer } from './container'
 
 export type OutputTransformHook<Data> = (
   slugs: string[],

@@ -2,10 +2,10 @@ import {
   type FormatAwareProcessors,
   createFormatAwareProcessors,
 } from '@mdx-js/mdx/internal-create-format-aware-processors'
-import type { CompileOptions } from '@mdx-js/mdx'
 import { createCachedImport, resolveOptions } from './util'
-import type { Pluggable } from 'unified'
+import type { CompileOptions } from '@mdx-js/mdx'
 import type { MaybePromise } from './declaration'
+import type { Pluggable } from 'unified'
 
 export type ResolvePlugins = Pluggable[] | ((v: Pluggable[]) => Pluggable[])
 
