@@ -123,6 +123,9 @@ async function publishNpm() {
     await Bun.$`${sq.parse(`bun ${args.join(' ')}`)}`
 
     await Bun.file(licensePath).delete()
+
+    await Bun.$`git tag ${pkgJson.name}@${pkgJson.version} ${pkgJson.version}`
+    await Bun.$`git push origin ${pkgJson.name}@${pkgJson.version}`
   }
 }
 
