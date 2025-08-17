@@ -18,24 +18,6 @@
         "typescript": "^5",
       },
     },
-    "examples/my-app": {
-      "name": "my-app",
-      "version": "0.1.0",
-      "dependencies": {
-        "next": "15.4.6",
-        "react": "19.1.0",
-        "react-dom": "19.1.0",
-      },
-      "devDependencies": {
-        "@types/node": "^20",
-        "@types/react": "^19",
-        "@types/react-dom": "^19",
-        "neapolitan": "workspace:*",
-        "neapolitan-input-local": "workspace:*",
-        "neapolitan-output-mdx": "workspace:*",
-        "typescript": "^5",
-      },
-    },
     "packages/neapolitan": {
       "name": "neapolitan",
       "version": "0.1.0-canary.1",
