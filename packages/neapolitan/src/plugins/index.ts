@@ -1,5 +1,8 @@
 import type { PluginBase, PluginWithRequiredHook } from '../plugin'
-import { loadFilterToFilterExprs, transformFilterToFilterExprs } from '../lib/hook-filter'
+import {
+  loadFilterToFilterExprs,
+  transformFilterToFilterExprs,
+} from '../lib/hook-filter'
 import type { ObjectHook } from 'rolldown'
 import { interpreter } from '@rolldown/pluginutils'
 

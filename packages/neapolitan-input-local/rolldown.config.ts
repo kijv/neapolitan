@@ -1,8 +1,4 @@
-import {
-  NODE_EXTERNAL,
-  createOutput,
-  getInput,
-} from '../../rolldownutils.mjs'
+import { NODE_EXTERNAL, createOutput, getInput } from '../../rolldownutils.mjs'
 import { defineConfig } from 'rolldown'
 import { dts } from 'rolldown-plugin-dts'
 import { exports } from './package.json'

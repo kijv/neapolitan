@@ -2,7 +2,12 @@ import './runtime.d.ts'
 
 import { NEAPOLITAN_CTX_ID, NEAPOLITAN_INPUT_ID } from './loaderutils.ts'
 import { type NeapolitanConfig, resolveNeapolitanConfig } from './config'
-import { generateNeapolitanInputCode, loadAny, resolveInputSource, transformAny } from './lib/plugin'
+import {
+  generateNeapolitanInputCode,
+  loadAny,
+  resolveInputSource,
+  transformAny,
+} from './lib/plugin'
 import type { PluginOption } from 'vite'
 import { createInputContainer } from './plugins/input'
 import { dataToEsm } from '@rollup/pluginutils'

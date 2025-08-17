@@ -53,7 +53,9 @@ export const createPluginContainer = <
           continue
 
         const handler = getHookHandler(plugin.load)
-        const result = await handleHookPromise<MaybePromise<any>>(handler.call(null, ...args))
+        const result = await handleHookPromise<MaybePromise<any>>(
+          handler.call(null, ...args)
+        )
         if (result != null) return result
       }
 
@@ -72,7 +74,9 @@ export const createPluginContainer = <
           continue
 
         const handler = getHookHandler(plugin.transform)
-        const result = await handleHookPromise<MaybePromise<any>>(handler.call(null, ...args))
+        const result = await handleHookPromise<MaybePromise<any>>(
+          handler.call(null, ...args)
+        )
         if (result != null) return result
       }
 
