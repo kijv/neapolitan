@@ -56,7 +56,8 @@ export const createNeapolitan = (
         })
 
         config.module.rules.push({
-          test: (value) => Object.values(resolveAlias).map(resolve).includes(value),
+          test: (value) =>
+            Object.values(resolveAlias).map(resolve).includes(value),
           use: [context.defaultLoaders.babel, neapolitanLoader],
         })
 
@@ -81,7 +82,10 @@ export const createNeapolitan = (
                   // construct the new request
                   const newRequest = {
                     ...request,
-                    request: resolveAlias[request.request as keyof typeof resolveAlias],
+                    request:
+                      resolveAlias[
+                        request.request as keyof typeof resolveAlias
+                      ],
                   }
 
                   // redirect the resolver

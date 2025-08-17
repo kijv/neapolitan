@@ -75,7 +75,11 @@ export const cachedNeapolitanConfig = (() => {
   return {
     load,
     resolve: async (options?: NeapolitanNextPluginOptions) => {
-      if (configPath == null || config == null || (options?.configPath != null && options.configPath !== configPath)) {
+      if (
+        configPath == null ||
+        config == null ||
+        (options?.configPath != null && options.configPath !== configPath)
+      ) {
         load(options)
       }
       if (!resolved && config != null) {
