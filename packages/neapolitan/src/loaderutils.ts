@@ -1,5 +1,3 @@
-/// <reference types="./runtime.d.ts" />
-
 import './runtime.d.ts'
 
 export const NEAPOLITAN_CTX_ID = 'neapolitan-ctx'
@@ -16,5 +14,7 @@ export { createInputContainer } from './plugins/input'
 
 export { normalizeHook } from './util'
 export { getHookHandler, extractFilter } from './plugins/'
+
+export { resolvePlugin } from './config'
 
 export type * from './plugins/declaration'

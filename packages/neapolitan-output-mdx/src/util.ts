@@ -1,6 +1,6 @@
+import type { CompilerOptions, ResolvePlugins } from './compiler'
 import type { CompileOptions } from '@mdx-js/mdx'
 import type { Pluggable } from 'unified'
-import type { CompilerOptions, ResolvePlugins } from './compiler'
 import { remarkMdxExport } from './plugins/remark-export'
 
 export const resolveOptions = ({

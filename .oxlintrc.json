@@ -1,4 +1,12 @@
 {
-  "plugins": ["import"],
-  "ignorePatterns": ["node_modules", "dist"]
+	"plugins": ["typescript", "unicorn", "oxc", "import"],
+	"categories": {
+		"perf": "warn"
+	},
+	"rules": {
+		"unicorn/prefer-node-protocol": "error",
+		"no-duplicate-imports": "error",
+		"sort-imports": "error"
+	},
+	"ignorePatterns": ["node_modules", "dist"]
 }

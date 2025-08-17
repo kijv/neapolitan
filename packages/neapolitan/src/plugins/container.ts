@@ -1,11 +1,11 @@
-import type { ObjectHook } from 'rolldown'
 import {
+  type FilterParams,
   createPluginHookUtils,
   getCachedFilterForPlugin,
   getHookHandler,
-  type FilterParams,
 } from '.'
-import type { PluginBase } from '../plugin'
+import type { MaybePromise, PluginBase } from '../plugin'
+import type { ObjectHook } from 'rolldown'
 
 type ExtractHandler<Plugin extends PluginBase, K extends keyof Plugin> =
   Plugin[K] extends ObjectHook<infer H>
@@ -47,13 +47,13 @@ export const createPluginContainer = <
 
   return {
     load: async (...args: Parameters<ExtractHandler<Plugin, 'load'>>) => {
-      for (const plugin of utils.getSortedPlugins('load')) {
+      for await (const plugin of utils.getSortedPlugins('load')) {
         const filter = getCachedFilterForPlugin(plugin, 'load')
         if (filter && filterArgs.load && !filter(...filterArgs.load(...args)))
           continue
 
         const handler = getHookHandler(plugin.load)
-        const result = await handleHookPromise(handler.call({}, ...args))
+        const result = await handleHookPromise<MaybePromise<any>>(handler.call(null, ...args))
         if (result != null) return result
       }
 
@@ -62,7 +62,7 @@ export const createPluginContainer = <
     transform: async (
       ...args: Parameters<ExtractHandler<Plugin, 'transform'>>
     ) => {
-      for (const plugin of utils.getSortedPlugins('transform')) {
+      for await (const plugin of utils.getSortedPlugins('transform')) {
         const filter = getCachedFilterForPlugin(plugin, 'transform')
         if (
           filter &&
@@ -72,7 +72,7 @@ export const createPluginContainer = <
           continue
 
         const handler = getHookHandler(plugin.transform)
-        const result = await handleHookPromise(handler.call(null, ...args))
+        const result = await handleHookPromise<MaybePromise<any>>(handler.call(null, ...args))
         if (result != null) return result
       }
 

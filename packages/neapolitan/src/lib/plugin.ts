@@ -1,21 +1,21 @@
-import { dataToEsm } from '@rollup/pluginutils'
 import type {
   ModuleType,
   ResolvedNeapolitanConfig,
   SourceDescription,
 } from '..'
-import { getHookHandler } from '../plugins'
-import type { MaybePromise } from '../declaration'
-import { interpreter } from '@rolldown/pluginutils'
 import {
   generalHookFilterMatcherToFilterExprs,
   loadFilterToFilterExprs,
   transformFilterToFilterExprs,
 } from './hook-filter'
+import type { InputContainer } from '../plugins/input'
+import type { MaybePromise } from '../declaration'
+import { NEAPOLITAN_INPUT_ID } from '../loaderutils'
+import { dataToEsm } from '@rollup/pluginutils'
+import { getHookHandler } from '../plugins'
+import { interpreter } from '@rolldown/pluginutils'
 import { normalizeHook } from '../util'
 import path from 'node:path'
-import type { InputContainer } from '../plugins/input'
-import { NEAPOLITAN_INPUT_ID } from '../loaderutils'
 
 export const isSourceDescription = <D>(
   obj: unknown
@@ -94,6 +94,8 @@ export const resolveInputSource = async (
     const handler = getHookHandler(load)
     const result = await handler.call(null, slugs)
 
+    if (!result) return
+
     return dataToEsm(
       typeof result === 'string'
         ? {
@@ -148,25 +150,26 @@ export const transformAny = async (
   const transformHook = normalizeHook(input.transform)
 
   if (
-    !transformHook.filter ||
-    interpreter(
+    transformHook.filter &&
+    !interpreter(
       transformFilterToFilterExprs(transformHook.filter)!,
       undefined,
       id
     )
-  ) {
-    const result = await transformHook.handler(id, code, {
-      moduleType: path.extname(id).slice(1),
-    })
+  )
+    return
 
-    return typeof result === 'object' && result != null
-      ? {
-          code: result.code,
-          map:
-            result.map != null && typeof result.map === 'string'
-              ? result.map
-              : null,
-        }
-      : result
-  }
+  const result = await transformHook.handler(id, code, {
+    moduleType: path.extname(id).slice(1),
+  })
+
+  return typeof result === 'object' && result != null
+    ? {
+        code: result.code,
+        map:
+          result.map != null && typeof result.map === 'string'
+            ? result.map
+            : null,
+      }
+    : result
 }

@@ -1,6 +1,6 @@
 import type { HookFilterExtension, ObjectHook } from 'rolldown'
-import type { PluginBaseConfig } from './plugins/declaration'
 import type { MaybePromise, Prettify } from './declaration'
+import type { PluginBaseConfig } from './plugins/declaration'
 
 export type PluginWithRequiredHook<
   PB extends PluginBase,

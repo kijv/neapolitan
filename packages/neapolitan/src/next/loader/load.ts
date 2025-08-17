@@ -1,10 +1,10 @@
 import type { LoaderContext } from 'webpack'
+import type { NeapolitanNextPluginOptions } from '..'
 import { cachedNeapolitanConfig } from '../util'
 import { createInputContainer } from '../../plugins/input'
 import { interpreter } from '@rolldown/pluginutils'
-import { normalizeHook } from '../../util'
 import { loadFilterToFilterExprs } from '../../lib/hook-filter'
-import type { NeapolitanNextPluginOptions } from '..'
+import { normalizeHook } from '../../util'
 
 export default async function loader(
   this: LoaderContext<NeapolitanNextPluginOptions>,

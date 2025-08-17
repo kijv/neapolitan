@@ -1,8 +1,8 @@
-import type { GeneralHookFilter, HookFilterExtension } from 'rolldown'
-import * as filter from '@rolldown/pluginutils'
 import * as R from 'remeda'
-import { arraify } from '../util'
+import * as filter from '@rolldown/pluginutils'
+import type { GeneralHookFilter, HookFilterExtension } from 'rolldown'
 import type { StringOrRegExp } from '../declaration'
+import { arraify } from '../util'
 
 function generateAtomMatcher(kind: 'code' | 'id', matcher: StringOrRegExp) {
   return kind === 'code' ? filter.code(matcher) : filter.id(matcher)

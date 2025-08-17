@@ -1,10 +1,7 @@
-import { interpreter } from '@rolldown/pluginutils'
 import type { PluginBase, PluginWithRequiredHook } from '../plugin'
+import { loadFilterToFilterExprs, transformFilterToFilterExprs } from '../lib/hook-filter'
 import type { ObjectHook } from 'rolldown'
-import {
-  loadFilterToFilterExprs,
-  transformFilterToFilterExprs,
-} from '../lib/hook-filter'
+import { interpreter } from '@rolldown/pluginutils'
 
 export type HookHandler<T> = T extends ObjectHook<infer H> ? H : T
 

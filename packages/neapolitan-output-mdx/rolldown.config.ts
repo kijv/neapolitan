@@ -1,9 +1,13 @@
+import {
+  NODE_EXTERNAL,
+  createOutput,
+  getInput,
+} from '../../rolldownutils.mjs'
 import { defineConfig } from 'rolldown'
 import { dts } from 'rolldown-plugin-dts'
 import { exports } from './package.json'
-import path from 'node:path'
 import { minify } from 'rollup-plugin-swc3'
-import { getInput, createOutput, NODE_EXTERNAL } from '../../rolldownutils.mjs'
+import path from 'node:path'
 
 const src = path.join(import.meta.dirname, 'src')
 

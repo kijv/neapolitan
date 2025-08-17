@@ -1,10 +1,10 @@
-import { createFilter, type FilterPattern } from '@rollup/pluginutils'
+import { type FilterPattern, createFilter } from '@rollup/pluginutils'
+import type { InputOption, ModuleType } from 'neapolitan'
+import type { GeneralHookFilter } from 'rolldown'
+import { collectFiles } from './util'
+import fs from 'node:fs/promises'
 import { packageDirectorySync } from 'package-directory'
 import path from 'node:path'
-import { collectFiles } from './util'
-import type { InputOption, ModuleType } from 'neapolitan'
-import fs from 'node:fs/promises'
-import type { GeneralHookFilter } from 'rolldown'
 
 export interface LocalInputOptions {
   root?: string
@@ -116,7 +116,7 @@ export const local = (options: LocalInputOptions): InputOption => {
           }
         )
 
-        for (const id of await getFiles()) {
+        for await (const id of await getFiles()) {
           if (filter(path.relative(dir, id))) {
             const text = await fs.readFile(path.relative(cwd, id), {
               encoding: 'utf8',
