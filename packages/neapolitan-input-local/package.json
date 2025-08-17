@@ -1,8 +1,10 @@
 {
   "name": "neapolitan-input-local",
   "description": "Local input plugin for Neapolitan",
-  "keywords": ["neapolitan-plugin"],
-  "version": "0.0.0",
+  "keywords": [
+    "neapolitan-plugin"
+  ],
+  "version": "0.1.0-canary.0",
   "publishConfig": {
     "access": "public"
   },

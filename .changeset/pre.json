@@ -1,0 +1,12 @@
+{
+  "mode": "pre",
+  "tag": "canary",
+  "initialVersions": {
+    "neapolitan": "0.0.0",
+    "neapolitan-input-local": "0.0.0",
+    "neapolitan-output-mdx": "0.0.0"
+  },
+  "changesets": [
+    "chubby-pans-grow"
+  ]
+}
