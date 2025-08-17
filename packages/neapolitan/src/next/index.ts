@@ -2,8 +2,8 @@ import '../runtime.d.ts'
 
 import type { NextConfig } from 'next'
 import { fileURLToPath } from 'node:url'
-import { CTX_MODULE_ID, INPUT_MODULE_ID } from '../lib/constants'
 import type { NeapolitanConfig } from '../config'
+import { NEAPOLITAN_CTX_ID, NEAPOLITAN_INPUT_ID } from '../loaderutils.ts'
 
 export const defineConfig = (options: NeapolitanConfig): NeapolitanConfig =>
   options
@@ -25,8 +25,8 @@ export const createNeapolitan = (
     return Object.assign({}, nextConfig ?? {}, {
       turbopack: {
         resolveAlias: {
-          [CTX_MODULE_ID]: `neapolitan/next?ctx`,
-          [INPUT_MODULE_ID]: `neapolitan/next?input`,
+          [NEAPOLITAN_CTX_ID]: `neapolitan/next?ctx`,
+          [NEAPOLITAN_INPUT_ID]: `neapolitan/next?input`,
         },
         rules: {
           '*': {

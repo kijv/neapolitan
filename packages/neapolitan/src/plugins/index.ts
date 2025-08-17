@@ -5,8 +5,8 @@ import { loadFilterToFilterExprs, transformFilterToFilterExprs } from '../lib/ho
 
 export type HookHandler<T> = T extends ObjectHook<infer H> ? H : T
 
-export interface PluginHookUtils {
-  getSortedPlugins: <T extends PluginBase, K extends keyof PluginBase>(
+export interface PluginHookUtils<T extends PluginBase> {
+  getSortedPlugins: <K extends keyof PluginBase>(
     hookName: K
   ) => PluginWithRequiredHook<T, K>[]
   getSortedPluginHooks: <K extends keyof PluginBase>(
@@ -18,15 +18,15 @@ export const getHookHandler = <T extends ObjectHook<Function>>(hook: T) => {
   return (typeof hook === 'object' ? hook.handler : hook) as HookHandler<T>
 }
 
-const extractFilter = <T extends Function, F>(
+export const extractFilter = <T extends Function, F>(
   hook: ObjectHook<T, { filter?: F }> | undefined
-) => {
+): {} | undefined=> {
   return hook && 'filter' in hook && hook.filter ? hook.filter : undefined
 }
 
 export function createPluginHookUtils<const T extends PluginBase>(
   plugins: T[]
-) {
+): PluginHookUtils<T> {
   // sort plugins per hook
   const sortedPluginsCache = new Map<keyof PluginBase, PluginBase<any>[]>()
   function getSortedPlugins<const K extends keyof PluginBase>(

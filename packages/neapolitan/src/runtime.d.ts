@@ -9,9 +9,9 @@ declare module 'neapolitan-input' {
 }
 
 declare module 'neapolitan-ctx' {
-  import type { ResolvedNeapolitanPluginOptions } from 'neapolitan'
+  import type { ResolvedNeapolitanConfig } from 'neapolitan'
 
-  declare const ctx: Omit<ResolvedNeapolitanPluginOptions, 'source'>
+  declare const ctx: Omit<ResolvedNeapolitanConfig, 'input' | 'output'>
 
   export default ctx
 }

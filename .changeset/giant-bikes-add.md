@@ -1,0 +1,5 @@
+---
+'neapolitan': patch
+---
+
+add loaderutils

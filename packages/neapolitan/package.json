@@ -1,6 +1,6 @@
 {
   "name": "neapolitan",
-  "description": "Content management tooling",
+  "description": "Low-level content management system",
   "version": "0.1.0-canary.0",
   "license": "BSD-2-Clause",
   "repository": {
@@ -25,6 +25,10 @@
     "./tree": {
       "types": "./dist/tree.d.ts",
       "default": "./dist/tree.js"
+    },
+    "./loaderutils": {
+      "types": "./dist/loaderutils.d.ts",
+      "default": "./dist/loaderutils.js"
     },
     "./next": {
       "types": "./dist/next.d.ts",

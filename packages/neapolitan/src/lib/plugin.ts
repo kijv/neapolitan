@@ -4,7 +4,6 @@ import type {
   ResolvedNeapolitanConfig,
   SourceDescription,
 } from '..'
-import { INPUT_MODULE_ID } from './constants'
 import { getHookHandler } from '../plugins'
 import type { MaybePromise } from '../declaration'
 import { interpreter } from '@rolldown/pluginutils'
@@ -16,6 +15,7 @@ import {
 import { normalizeHook } from '../util'
 import path from 'node:path'
 import type { InputContainer } from '../plugins/input'
+import { NEAPOLITAN_INPUT_ID } from '../loaderutils'
 
 export const isSourceDescription = <D>(
   obj: unknown
@@ -46,7 +46,7 @@ export const generateNeapolitanInputCode = async (
   resolvedConfig: ResolvedNeapolitanConfig,
   getInput: () => MaybePromise<InputContainer>,
   formatImport = (slug: string, moduleType: ModuleType) =>
-    `${INPUT_MODULE_ID}/${slug}?moduleType=${encodeURIComponent(moduleType)}`
+    `${NEAPOLITAN_INPUT_ID}/${slug}?moduleType=${encodeURIComponent(moduleType)}`
 ): Promise<string> => {
   const input = await getInput()
   const slugs = await input.slugs.collect()

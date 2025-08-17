@@ -3,11 +3,11 @@
 import './runtime.d.ts'
 
 import type { PluginOption } from 'vite'
-import { CTX_MODULE_ID, INPUT_MODULE_ID } from './lib/constants'
 import { dataToEsm } from '@rollup/pluginutils'
 import { resolveNeapolitanConfig, type NeapolitanConfig } from './config'
 import { createInputContainer } from './plugins/input'
 import { generateNeapolitanInputCode, loadAny, resolveInputSource, transformAny } from './lib/plugin'
+import { NEAPOLITAN_CTX_ID, NEAPOLITAN_INPUT_ID } from './loaderutils.ts'
 
 export type NeapolitanVitePluginOptions = NeapolitanConfig
 
@@ -26,15 +26,15 @@ const neapolitanVitePlugin = ({
     resolvedInput ??
     (resolvedInput = createInputContainer((await getResolvedConfig()).input))
 
-  const resolvedCtxId = `\0${CTX_MODULE_ID}`
-  const resolvedSrcId = `\0${INPUT_MODULE_ID}`
+  const resolvedCtxId = `\0${NEAPOLITAN_CTX_ID}`
+  const resolvedSrcId = `\0${NEAPOLITAN_INPUT_ID}`
 
   return {
     name: 'neapolitan',
     resolveId(id) {
-      if (id === CTX_MODULE_ID) return resolvedCtxId
-      if (id.startsWith(INPUT_MODULE_ID))
-        return resolvedSrcId + id.slice(INPUT_MODULE_ID.length)
+      if (id === NEAPOLITAN_CTX_ID) return resolvedCtxId
+      if (id.startsWith(NEAPOLITAN_INPUT_ID))
+        return resolvedSrcId + id.slice(NEAPOLITAN_INPUT_ID.length)
 
       return null
     },
