@@ -1,12 +1,12 @@
-import { loadConfig } from 'c12'
-import { createCachedImport } from '../util'
 import {
-  resolveNeapolitanConfig,
   type NeapolitanConfig,
   type ResolvedNeapolitanConfig,
+  resolveNeapolitanConfig,
 } from '..'
 import type { MaybePromise } from '../declaration'
 import type { NeapolitanNextPluginOptions } from '.'
+import { createCachedImport } from '../util'
+import { loadConfig } from 'c12'
 
 export const loadNeapolitanConfig = createCachedImport(() => {
   return loadConfig<NeapolitanConfig>({

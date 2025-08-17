@@ -1,9 +1,9 @@
 import '../runtime.d.ts'
 
+import { NEAPOLITAN_CTX_ID, NEAPOLITAN_INPUT_ID } from '../loaderutils.ts'
+import type { NeapolitanConfig } from '../config'
 import type { NextConfig } from 'next'
 import { fileURLToPath } from 'node:url'
-import type { NeapolitanConfig } from '../config'
-import { NEAPOLITAN_CTX_ID, NEAPOLITAN_INPUT_ID } from '../loaderutils.ts'
 
 export const defineConfig = (options: NeapolitanConfig): NeapolitanConfig =>
   options
