@@ -33,6 +33,7 @@
     "@changesets/cli": "^2.29.5",
     "@prettier/plugin-oxc": "^0.0.4",
     "@types/bun": "latest",
+    "fast-glob": "^3.3.3",
     "oxlint": "^1.9.0",
     "oxlint-tsgolint": "^0.0.3",
     "prettier": "^3.6.2",
