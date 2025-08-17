@@ -30,17 +30,13 @@ jobs:
           RELEASE_CHECK=$(bun run ./scripts/release/check-is-release.ts 2> /dev/null || :)
           if [[ $RELEASE_CHECK == "new-release" || $RELEASE_CHECK == v* ]];
             then
-              echo "IS_RELEASE=true" >> $GITHUB_OUTPUT
+              echo "IS_RELEASE=true" >> $GITHUB_ENV
             else
-              echo "IS_RELEASE=false" >> $GITHUB_OUTPUT
+              echo "IS_RELEASE=false" >> $GITHUB_ENV
           fi
-
-    outputs:
-      is-release: ${{ steps.is-release.outputs.IS_RELEASE == 'true' }}
 
   build:
     runs-on: ubuntu-latest
-    if: ${{ needs.changes.outputs.is-release == true }}
     needs:
       - changes
     steps:
@@ -110,7 +106,7 @@ jobs:
       - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
 
       - name: Publish to NPM
-        if: ${{ needs.changes.outputs.is-release == 'true' }}
+        if: ${{ env.IS_RELEASE == 'true' }}
         id: changesets
         uses: changesets/action@v1
         with:
