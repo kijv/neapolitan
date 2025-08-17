@@ -3,6 +3,12 @@
   "description": "Local input plugin for Neapolitan",
   "keywords": ["neapolitan-plugin"],
   "version": "0.0.0",
+  "license": "BSD-2-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kijv/neapolitan.git",
+    "directory": "packages/neapolitan-input-local"
+  },
   "publishConfig": {
     "access": "public"
   },

@@ -2,6 +2,12 @@
   "name": "neapolitan",
   "description": "Content management tooling",
   "version": "0.0.0",
+  "license": "BSD-2-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kijv/neapolitan.git",
+    "directory": "packages/neapolitan"
+  },
   "publishConfig": {
     "access": "public"
   },
