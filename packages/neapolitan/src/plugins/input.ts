@@ -59,11 +59,11 @@ export interface Input
   >
 }
 
-export type InputContainer = Required<Pick<Input, 'slugs' | 'load' | 'transform'>>
+export type InputContainer = Required<
+  Pick<Input, 'slugs' | 'load' | 'transform'>
+>
 
-export const createInputContainer = (
-  inputs: Input[]
-): InputContainer => {
+export const createInputContainer = (inputs: Input[]): InputContainer => {
   const inputSlugs = inputs.map((input) => {
     return {
       name: input.name,

@@ -52,7 +52,7 @@ jobs:
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: ${{ env.BUN_VERSION }}
-      
+
       # Since actions/checkout won't include the latest tag information,
       # use the old clone workflow while still preserving branch specific
       # checkout behavior to support backports.
@@ -85,7 +85,7 @@ jobs:
 
       - run: bun install
       - run: bun run build
-        
+
       - name: Create Release Pull Request
         id: changesets
         uses: changesets/action@v1

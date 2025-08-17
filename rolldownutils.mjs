@@ -4,10 +4,7 @@ import path from 'node:path'
 
 export * as pluginutils from '@rolldown/pluginutils'
 
-export const getInput = (
-  exports,
-  cwd = process.cwd()
-) =>
+export const getInput = (exports, cwd = process.cwd()) =>
   glob(
     Object.entries(exports).flatMap(([key]) =>
       key === '.' ? ['index.*'] : [`${key}.*`, `${key}/index.*`]
@@ -51,18 +48,12 @@ export const createOutput = (
   }
 }
 
-export const createEntryFileNames = (
-  exports,
-  src,
-  cwd = process.cwd()
-) => {
+export const createEntryFileNames = (exports, src, cwd = process.cwd()) => {
   const exportMap = new Map(
     Object.entries(exports).map(([key, value]) => [key, value])
   )
 
-  const getExportFromKeys = (
-    keys
-  ) => {
+  const getExportFromKeys = (keys) => {
     for (const key of keys) {
       if (exportMap.has(key)) {
         return exportMap.get(key)

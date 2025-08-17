@@ -12,7 +12,9 @@ export interface LocalInputOptions {
   filter?: GeneralHookFilter
 }
 
-const normalizeFilter = (filter: GeneralHookFilter | undefined): {
+const normalizeFilter = (
+  filter: GeneralHookFilter | undefined
+): {
   include?: FilterPattern
   exclude?: FilterPattern
 } => {
@@ -44,13 +46,9 @@ export const local = (options: LocalInputOptions): InputOption => {
 
   const filter = normalizeFilter(options.filter)
 
-  const idFilter = createFilter(
-    filter.include,
-    filter.exclude,
-    {
-      resolve: dir,
-    }
-  )
+  const idFilter = createFilter(filter.include, filter.exclude, {
+    resolve: dir,
+  })
 
   let slugsCache: Map<
     string,
