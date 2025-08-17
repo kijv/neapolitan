@@ -57,7 +57,7 @@ export const loader = async <const Options extends NeapolitanLoaderOptions>(
         if (!source) return
 
         const handler = getHookHandler(output.transform)
-        const result = await handler.call(null, slugs, source.code, {
+        const result = await handler(slugs, source.code, {
           moduleType: source.moduleType,
         })
 

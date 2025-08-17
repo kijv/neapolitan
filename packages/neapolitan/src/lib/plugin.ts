@@ -92,7 +92,7 @@ export const resolveInputSource = async (
 
   if (load) {
     const handler = getHookHandler(load)
-    const result = await handler.call(null, slugs)
+    const result = await handler(slugs)
 
     if (!result) return
 

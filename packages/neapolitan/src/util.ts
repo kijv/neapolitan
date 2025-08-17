@@ -6,7 +6,7 @@ export const asyncFlatten = async <T extends unknown[]>(
   arr: T
 ): Promise<AsyncFlatten<T>> => {
   do {
-    arr = (await Promise.all(arr)).flat(Infinity) as any
+    arr = (await Promise.all(arr)).flat(Infinity) as any // eslint-disable-line no-await-in-loop
   } while (arr.some((v: any) => v?.then))
   return arr as unknown[] as AsyncFlatten<T>
 }
