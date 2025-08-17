@@ -50,11 +50,11 @@ export const cachedNeapolitanConfig = (() => {
   let config: MaybePromise<NeapolitanConfig> | null = null
   let resolved: MaybePromise<ResolvedNeapolitanConfig> | null = null
 
-  const c12imp = async () =>
+  const c12imp = async (configPath: string | undefined) =>
     loadConfig<NeapolitanConfig>({
       cwd: process.cwd(),
       name: 'neapolitan',
-      configFile: 'neapolitan.config',
+      configFile: configPath ?? 'neapolitan.config',
     })
 
   const load = async (options?: NeapolitanNextPluginOptions) => {
@@ -63,8 +63,8 @@ export const cachedNeapolitanConfig = (() => {
       config = null
       resolved = null
     }
-    if (!config && options?.configPath != null) {
-      config = c12imp().then((module) => {
+    if (!config) {
+      config = c12imp(options?.configPath).then((module) => {
         config = module.config
         return module.config
       })
@@ -75,7 +75,11 @@ export const cachedNeapolitanConfig = (() => {
   return {
     load,
     resolve: async (options?: NeapolitanNextPluginOptions) => {
-      if (options?.configPath != null && options.configPath !== configPath) {
+      if (
+        configPath == null ||
+        config == null ||
+        (options?.configPath != null && options.configPath !== configPath)
+      ) {
         load(options)
       }
       if (!resolved && config != null) {
