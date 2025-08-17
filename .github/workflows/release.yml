@@ -41,6 +41,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    if: ${{ needs.changes.outputs.is-release == 'true' }}
     needs:
       - changes
     steps:
