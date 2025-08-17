@@ -1,0 +1,55 @@
+import { defineConfig } from 'rolldown'
+import { dts } from 'rolldown-plugin-dts'
+import { exports } from './package.json'
+import path from 'node:path'
+import { minify } from 'rollup-plugin-swc3'
+import {
+  getInput,
+  createOutput,
+  NODE_EXTERNAL,
+} from '../../rolldownutils.mjs'
+
+const src = path.join(import.meta.dirname, 'src')
+
+const input = await getInput(exports, src)
+
+const external = [/@mdx-js\/mdx*/]
+
+const baseConfig = defineConfig({
+  input,
+  output: {
+    ...createOutput('dist', exports, import.meta.dirname, src),
+    format: 'esm',
+    advancedChunks: {
+      groups: [
+        {
+          test: /node_modules/,
+          name: 'compiled',
+        },
+      ],
+    },
+  },
+  external: [...NODE_EXTERNAL, ...external],
+})
+
+export default defineConfig([
+  {
+    ...baseConfig,
+    plugins: [
+      dts({
+        emitDtsOnly: true,
+        oxc: true,
+      }),
+    ],
+  },
+  {
+    ...baseConfig,
+    plugins: [
+      process.env.BUILD
+        ? minify({
+            module: true,
+          })
+        : null,
+    ],
+  },
+])

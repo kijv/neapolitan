@@ -1,0 +1,27 @@
+{
+  "name": "neapolitan-input-local",
+  "version": "0.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf dist && BUILD=1 rolldown -m -c rolldown.config.ts",
+    "dev": "rolldown -c rolldown.config.ts --watch"
+  },
+  "devDependencies": {
+    "@rolldown/pluginutils": "catalog:bundler",
+    "@rollup/pluginutils": "catalog:bundler",
+    "neapolitan": "workspace:*",
+    "package-directory": "^8.1.0",
+    "rolldown": "catalog:bundler",
+    "rolldown-plugin-dts": "catalog:bundler",
+    "rollup-plugin-swc3": "catalog:bundler"
+  }
+}

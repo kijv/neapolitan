@@ -1,0 +1,45 @@
+{
+  "name": "neapolitan-project",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/*",
+      "scripts/*"
+    ],
+    "catalog": {
+      "vite": "^7"
+    },
+    "catalogs": {
+      "bundler": {
+        "@rolldown/pluginutils": "1.0.0-beta.32",
+        "@rollup/pluginutils": "latest",
+        "rolldown": "1.0.0-beta.32",
+        "rolldown-plugin-dts": "latest",
+        "rollup-plugin-swc3": "latest"
+      }
+    }
+  },
+  "scripts": {
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format:check": "prettier --check .",
+    "format": "prettier --write .",
+    "build": "turbo run build",
+    "ci:version": "bun run ./scripts/release/version-packages.ts",
+    "ci:publish": "bun run ./scripts/release/publish-npm.ts"
+  },
+  "devDependencies": {
+    "@changesets/changelog-github": "^0.5.1",
+    "@changesets/cli": "^2.29.5",
+    "@prettier/plugin-oxc": "^0.0.4",
+    "@types/bun": "latest",
+    "oxlint": "^1.9.0",
+    "oxlint-tsgolint": "^0.0.3",
+    "prettier": "^3.6.2",
+    "turbo": "^2.5.5"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "packageManager": "bun@1.2.19"
+}

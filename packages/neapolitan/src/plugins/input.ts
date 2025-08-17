@@ -1,0 +1,107 @@
+import type { GeneralHookFilter, ModuleType } from 'rolldown'
+import type { PluginBase, SourceDescription } from '..'
+import { createPluginContainer } from './container'
+import type { MaybePromise, NullValue, Prettify } from '../declaration'
+import { neapolitanError } from '../util'
+
+export interface CommonInputOptions {
+  root?: string
+  dir: string
+  filter?: GeneralHookFilter
+}
+
+export interface SlugDescription {
+  id: string
+  slug: string
+  moduleType: ModuleType
+}
+
+export type SourceResult = NullValue | string | SourceDescription
+
+export type InputLoadHook = (id: string) => MaybePromise<SourceResult>
+
+export type InputTransformHook = (
+  id: string,
+  code: string,
+  meta: {
+    moduleType: ModuleType
+  }
+) => MaybePromise<SourceResult>
+
+export type InputSlugsLoadHook = (slugs: string[]) => MaybePromise<SourceResult>
+
+export type InputTransformLoadHook = (
+  slugs: string[],
+  code: string,
+  meta: {
+    moduleType: ModuleType
+  }
+) => MaybePromise<SourceResult>
+
+export interface Input
+  extends PluginBase<{
+    load: {
+      hook: InputLoadHook
+      filter: true
+    }
+    transform: {
+      hook: InputTransformHook
+      filter: true
+    }
+  }> {
+  name: string
+  slugs: Prettify<
+    {
+      collect: () => MaybePromise<Array<SlugDescription>>
+    } & Pick<
+      PluginBase<{
+        load: {
+          hook: InputSlugsLoadHook
+        }
+        transform: {
+          hook: InputTransformLoadHook
+        }
+      }>,
+      'load' | 'transform'
+    >
+  >
+}
+
+export type InputContainer = Required<Pick<Input, 'slugs' | 'load' | 'transform'>>
+
+export const createInputContainer = (
+  inputs: Input[]
+): InputContainer => {
+  const inputSlugs = inputs.map((input) => {
+    return {
+      name: input.name,
+      load: input.slugs.load,
+      transform: input.slugs.transform,
+    }
+  })
+
+  return {
+    slugs: {
+      collect: async () => {
+        const slugs = new Set<SlugDescription>()
+
+        for (const input of inputs) {
+          try {
+            for (const slug of await input.slugs.collect()) {
+              slugs.add(slug)
+            }
+          } catch (e) {
+            neapolitanError(e, ` [input: ${input.name}]`)
+          }
+        }
+
+        return Array.from(slugs)
+      },
+      ...createPluginContainer(inputSlugs),
+    },
+    ...createPluginContainer(inputs, {
+      load: (id) => [undefined, id, undefined],
+      transform: (id, code, meta) => [code, id, meta.moduleType],
+    }),
+  }
+}

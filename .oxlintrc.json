@@ -1,0 +1,4 @@
+{
+  "plugins": ["import"],
+  "ignorePatterns": ["node_modules", "dist"]
+}
