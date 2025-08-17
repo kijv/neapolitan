@@ -1,11 +1,12 @@
-import { arraify, asyncFlatten } from './util'
-import type { Input, InputOption, Output, OutputOption, PluginOption } from '.'
-import type { GeneralHookFilter } from 'rolldown'
 import type { Falsy, PluginBase } from './plugin'
+import type { Input, InputOption, Output, OutputOption, PluginOption } from '.'
+import { arraify, asyncFlatten } from './util'
+import type { GeneralHookFilter } from 'rolldown'
+import type { MaybeArray } from './declaration'
 
 export interface NeapolitanConfig {
-  input: InputOption
-  output?: OutputOption
+  input: MaybeArray<InputOption>
+  output?: MaybeArray<OutputOption>
   splitting?: Record<
     string,
     {
