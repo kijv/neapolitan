@@ -1,18 +1,18 @@
 import type { LoaderContext } from 'webpack'
-import { loadNeapolitanConfig } from '../config'
+import { cachedNeapolitanConfig } from '../util'
 import { dataToEsm } from '@rollup/pluginutils'
 import {
   generateNeapolitanInputCode,
   loadAny,
   resolveInputSource,
 } from '../../lib/plugin'
-import { resolveNeapolitanConfig } from '../..'
 import { createInputContainer } from '../../plugins/input'
+import type { NeapolitanNextPluginOptions } from '..'
 
 export default async function loader(
-  this: LoaderContext<{}>,
-  code: string
+  this: LoaderContext<NeapolitanNextPluginOptions>
 ): Promise<void> {
+  const options = this.getOptions()
   const callback = this.async()
 
   const isCtx = this.resourceQuery === '?ctx'
@@ -20,13 +20,12 @@ export default async function loader(
   const isSlug = this.resourceQuery.startsWith('?slug')
 
   if (isCtx || isInput || isSlug) {
-    const { config } = await loadNeapolitanConfig()
-
     if (isCtx) {
-      const { input: _input, output: _output, ...options } = config
+      const resolvedConfig = await cachedNeapolitanConfig.resolve(options)
+      const { input: _input, output: _output, ...config } = resolvedConfig
       return callback(
         null,
-        dataToEsm(options, {
+        dataToEsm(config, {
           namedExports: true,
           preferConst: true,
         })
@@ -34,7 +33,7 @@ export default async function loader(
     }
 
     if (isInput || isSlug) {
-      const resolvedConfig = await resolveNeapolitanConfig(config)
+      const resolvedConfig = await cachedNeapolitanConfig.resolve(options)
 
       if (isInput) {
         const code = await generateNeapolitanInputCode(
@@ -67,8 +66,7 @@ export default async function loader(
 
   const id = this.resource
   const result = await loadAny(id, async () => {
-    const { config } = await loadNeapolitanConfig()
-    const resolvedConfig = await resolveNeapolitanConfig(config)
+    const resolvedConfig = await cachedNeapolitanConfig.resolve(options)
     return createInputContainer(resolvedConfig.input)
   })
   if (result)
@@ -77,5 +75,5 @@ export default async function loader(
       typeof result === 'object' && result != null ? result.code : result
     )
 
-  return callback(null, code)
+  return callback(null, undefined)
 }

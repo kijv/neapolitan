@@ -2,21 +2,26 @@ import '../runtime.d.ts'
 
 import type { NextConfig } from 'next'
 import { fileURLToPath } from 'node:url'
-import { CTX_MODULE_ID, INPUT_MODULE_ID } from '../lib/constants.ts'
+import { CTX_MODULE_ID, INPUT_MODULE_ID } from '../lib/constants'
 import type { NeapolitanConfig } from '../config'
 
-export const defineConfig = (
-  options: NeapolitanNextPluginOptions
-): NeapolitanNextPluginOptions => options
-
-export type NeapolitanNextPluginOptions = NeapolitanConfig
+export const defineConfig = (options: NeapolitanConfig): NeapolitanConfig =>
+  options
 
 const resolve = (id: string) => fileURLToPath(import.meta.resolve(id))
 
-export const createNeapolitan = (): ((
-  nextConfig?: NextConfig
-) => NextConfig) => {
+export interface NeapolitanNextPluginOptions {
+  configPath?: string
+}
+
+export const createNeapolitan = (
+  options: NeapolitanNextPluginOptions = {}
+): ((nextConfig?: NextConfig) => NextConfig) => {
   return <const T extends NextConfig>(nextConfig?: T) => {
+    const loaderOptions = {
+      configPath: options.configPath,
+    } as Record<string, string>
+
     return Object.assign({}, nextConfig ?? {}, {
       turbopack: {
         resolveAlias: {
@@ -28,11 +33,11 @@ export const createNeapolitan = (): ((
             loaders: [
               {
                 loader: resolve('neapolitan/next/loader/load'),
-                options: {},
+                options: loaderOptions,
               },
               {
                 loader: resolve('neapolitan/next/loader/transform'),
-                options: {},
+                options: loaderOptions,
               },
             ],
             as: '*',
@@ -41,7 +46,7 @@ export const createNeapolitan = (): ((
             loaders: [
               {
                 loader: resolve('neapolitan/next/loader/neapolitan'),
-                options: {},
+                options: loaderOptions,
               },
             ],
             as: '*.js',

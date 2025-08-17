@@ -1,9 +1,7 @@
 import type { ModuleType } from 'rolldown'
-import type { PluginBase, SourceDescription } from '..'
+import type { PluginBase, SourceResult } from '..'
 import { createPluginContainer } from './container'
-import type { MaybePromise, NullValue, Prettify } from '../declaration'
-
-export type SourceResult<O = {}> = NullValue | string | (SourceDescription & O)
+import type { MaybePromise, Prettify } from '../declaration'
 
 export type OutputTransformHook<Data> = (
   slugs: string[],

@@ -22,7 +22,7 @@ export type InputTransformHook = (
 
 export type InputSlugsLoadHook = (slugs: string[]) => MaybePromise<SourceResult>
 
-export type InputTransformLoadHook = (
+export type InputSlugsTransformHook = (
   slugs: string[],
   code: string,
   meta: {
@@ -51,7 +51,7 @@ export interface Input
           hook: InputSlugsLoadHook
         }
         transform: {
-          hook: InputTransformLoadHook
+          hook: InputSlugsTransformHook
         }
       }>,
       'load' | 'transform'

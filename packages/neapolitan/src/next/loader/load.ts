@@ -1,21 +1,20 @@
 import type { LoaderContext } from 'webpack'
-import { loadNeapolitanConfig } from '../config'
-import { resolveNeapolitanConfig } from '../..'
+import { cachedNeapolitanConfig } from '../util'
 import { createInputContainer } from '../../plugins/input'
 import { interpreter } from '@rolldown/pluginutils'
 import { normalizeHook } from '../../util'
 import { loadFilterToFilterExprs } from '../../lib/hook-filter'
+import type { NeapolitanNextPluginOptions } from '..'
 
 export default async function loader(
-  this: LoaderContext<{}>,
+  this: LoaderContext<NeapolitanNextPluginOptions>,
   code: string
 ): Promise<void> {
   const callback = this.async()
 
   const id = this.resource
 
-  const { config } = await loadNeapolitanConfig()
-  const resolvedOptions = await resolveNeapolitanConfig(config)
+  const resolvedOptions = await cachedNeapolitanConfig.resolve(this.getOptions())
   const resolvedInput = await createInputContainer(resolvedOptions.input)
 
   const loadHook = normalizeHook(resolvedInput.load)

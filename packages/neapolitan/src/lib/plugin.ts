@@ -1,6 +1,5 @@
 import { dataToEsm } from '@rollup/pluginutils'
 import type {
-  InputContainer,
   ModuleType,
   ResolvedNeapolitanConfig,
   SourceDescription,
@@ -16,6 +15,7 @@ import {
 } from './hook-filter'
 import { normalizeHook } from '../util'
 import path from 'node:path'
+import type { InputContainer } from '../plugins/input'
 
 export const isSourceDescription = <D>(
   obj: unknown
