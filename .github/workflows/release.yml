@@ -1,5 +1,4 @@
-# Update all mentions of this name in vercel-packages when changing.
-name: release
+name: Release
 
 on:
   push:
