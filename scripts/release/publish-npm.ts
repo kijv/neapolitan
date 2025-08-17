@@ -111,7 +111,7 @@ async function publishNpm() {
     const licensePath = join(process.cwd(), 'packages', packageDir.name, 'LICENSE')
 
     if (await license.exists()) {
-      Bun.write(licensePath, await license.text())
+      await Bun.write(licensePath, await license.text())
     }
 
     const packagePath = join(packagesDir, packageDir.name)
