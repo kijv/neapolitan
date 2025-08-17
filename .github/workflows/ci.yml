@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    types: [opened, synchronize]
+
+env:
+  TURBO_VERSION: 2.5.5
+  NODE_LTS_VERSION: 20
+  BUN_VERSION: 1.2.20
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Lint
+        run: bun run lint
+
+  build:
+    name: Build and Test
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 25
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_LTS_VERSION }}
+          check-latest: true
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build
+        run: bun run build
+
+      - name: Test
+        run: bun test
