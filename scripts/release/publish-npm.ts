@@ -65,6 +65,8 @@ async function publishNpm() {
     throw new Error('NPM_TOKEN is not set')
   }
 
+  const license = Bun.file(join(process.cwd(), 'LICENSE'))
+
   const packagesDir = join(process.cwd(), 'packages')
   const packageDirs = await readdir(packagesDir, {
     withFileTypes: true,
@@ -106,6 +108,12 @@ async function publishNpm() {
       latest: tags.latest,
     })
 
+    const licensePath = join(process.cwd(), 'packages', packageDir.name, 'LICENSE')
+
+    if (await license.exists()) {
+      Bun.write(licensePath, await license.text())
+    }
+
     const packagePath = join(packagesDir, packageDir.name)
     const args = ['publish', '--cwd', packagePath, '--tag', tag]
 
@@ -113,6 +121,8 @@ async function publishNpm() {
       `Running command: "bun ${args.join(' ')}" for ${pkgJson.name}@${pkgJson.version}`
     )
     await Bun.$`${sq.parse(`bun ${args.join(' ')}`)}`
+
+    await Bun.file(licensePath).delete()
   }
 }
 
