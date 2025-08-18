@@ -29,7 +29,7 @@ type FindKey<
       : any
     : any
 
-export type TreeProxy<Data extends RawTreeData> = {
+export type TreeProxy<Data extends RawTreeData> = Tree & {
   getValue: <const K extends string>(
     target: K
   ) => FindKey<Data, K>['value'] | undefined
@@ -137,7 +137,7 @@ export const proxyTree = <Data extends RawTreeData>(
   }
 
   return new Proxy(
-    {
+    Object.assign(tree, {
       getValue,
       setValue,
       getTree,
@@ -223,10 +223,10 @@ export const proxyTree = <Data extends RawTreeData>(
 
         return result
       },
-    },
+    }),
     {
       get: (t, p, r) => Reflect.get(t, p, r),
-    }
+    },
   )
 }
 
@@ -293,4 +293,30 @@ export const lazyTransformTree = <const T>(
       get: (t, p, r) => Reflect.get(t, p, r),
     }
   )
+}
+
+export const isTreeProxy = (value: any): value is TreeProxy<RawTreeData> => {
+  if (value == null || typeof value !== 'object' || value.type !== 'tree')
+    return false
+
+  const keyTypeofs: Record<string, (value: unknown) => boolean> = {
+    type: (value) => typeof value === 'string' && value === 'tree',
+    children: (value) => value instanceof Map,
+    name: (value) => typeof value === 'string',
+    getValue: (value) => typeof value === 'function',
+    setValue: (value) => typeof value === 'function',
+    getTree: (value) => typeof value === 'function',
+    setTree: (value) => typeof value === 'function',
+    get: (value) => typeof value === 'function',
+    load: (value) => typeof value === 'function',
+    toJSON: (value) => typeof value === 'function',
+  }
+
+  for (const [key, verify] of Object.entries(keyTypeofs)) {
+    if (!verify(value[key])) {
+      return false
+    }
+  }
+
+  return true
 }
