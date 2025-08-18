@@ -8,9 +8,9 @@ import {
   resolvePlugin,
 } from './loaderutils'
 import type { MaybeArray, NullValue } from './declaration'
+import { createCachedImport, neapolitanError } from './util'
 import type { Output } from './plugins/output'
 import type { OutputOption } from '.'
-import { createCachedImport, neapolitanError } from './util'
 import { isTreeProxy } from './tree'
 
 export interface NeapolitanLoaderOptions {

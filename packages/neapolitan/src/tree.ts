@@ -226,7 +226,7 @@ export const proxyTree = <Data extends RawTreeData>(
     }),
     {
       get: (t, p, r) => Reflect.get(t, p, r),
-    },
+    }
   )
 }
 
