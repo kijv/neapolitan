@@ -1,8 +1,15 @@
-import type { MaybePromise, Prettify } from '../declaration'
+import type { MaybePromise, NullValue, Prettify } from '../declaration'
 import type { PluginBase, SourceResult } from '..'
+import { type PluginContainer, createPluginContainer } from './container'
 import type { ModuleType } from 'rolldown'
-import { createPluginContainer } from './container'
 import { neapolitanError } from '../util'
+
+interface PartialResolvedId {
+  external?: boolean | 'absolute' | 'relative'
+  id: string
+}
+
+export type ResolveIdResult = string | NullValue | false | PartialResolvedId
 
 export interface SlugDescription {
   id: string
@@ -30,6 +37,8 @@ export type InputSlugsTransformHook = (
   }
 ) => MaybePromise<SourceResult>
 
+export type InputSlugsResolveIdHook = (id: string) => ResolveIdResult
+
 export interface Input
   extends PluginBase<{
     load: {
@@ -52,14 +61,27 @@ export interface Input
         transform: {
           hook: InputSlugsTransformHook
         }
+        resolveId: {
+          hook: InputSlugsResolveIdHook
+          filter: true
+        }
       }>,
-      'load' | 'transform'
+      'load' | 'transform' | 'resolveId'
     >
   >
 }
 
 export type InputContainer = Required<
-  Pick<Input, 'slugs' | 'load' | 'transform'>
+  PluginContainer<Input> & {
+    slugs: Prettify<
+      PluginContainer<
+        Input['slugs'] & {
+          name: string
+        }
+      > &
+        Pick<Input['slugs'], 'collect'>
+    >
+  }
 >
 
 export const createInputContainer = (inputs: Input[]): InputContainer => {
@@ -68,6 +90,7 @@ export const createInputContainer = (inputs: Input[]): InputContainer => {
       name: input.name,
       load: input.slugs.load,
       transform: input.slugs.transform,
+      resolveId: input.slugs.resolveId,
     }
   })
 
@@ -88,7 +111,9 @@ export const createInputContainer = (inputs: Input[]): InputContainer => {
 
         return Array.from(slugs)
       },
-      ...createPluginContainer(inputSlugs),
+      ...createPluginContainer(inputSlugs, {
+        resolveId: (id) => [undefined, id, undefined],
+      }),
     },
     ...createPluginContainer(inputs, {
       load: (id) => [undefined, id, undefined],

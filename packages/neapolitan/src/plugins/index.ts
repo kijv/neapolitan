@@ -65,6 +65,7 @@ export type FilterParams = SkipItems<Parameters<typeof interpreter>, 1>
 type FilterForPluginValue = {
   load?: ((...args: FilterParams) => boolean) | undefined
   transform?: ((...args: FilterParams) => boolean) | undefined
+  resolveId?: ((...args: FilterParams) => boolean) | undefined
 }
 const filterForPlugin = new WeakMap<PluginBase<any>, FilterForPluginValue>()
 
@@ -74,6 +75,9 @@ export function getCachedFilterForPlugin<H extends keyof FilterForPluginValue>(
       hook: (...args: any) => any
     }
     transform: {
+      hook: (...args: any) => any
+    }
+    resolveId: {
       hook: (...args: any) => any
     }
   }>,
@@ -107,6 +111,15 @@ export function getCachedFilterForPlugin<H extends keyof FilterForPluginValue>(
         ? (...args) => interpreter(filterExprs, ...args)
         : undefined
       filter = filters.transform
+      break
+    }
+    case 'resolveId': {
+      const rawFilter = extractFilter(plugin.resolveId)
+      const filterExprs = loadFilterToFilterExprs(rawFilter)
+      filters.resolveId = filterExprs
+        ? (...args) => interpreter(filterExprs, ...args)
+        : undefined
+      filter = filters.resolveId
       break
     }
   }
