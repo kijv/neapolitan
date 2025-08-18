@@ -8,41 +8,66 @@ import {
   resolvePlugin,
 } from './loaderutils'
 import type { MaybeArray, NullValue } from './declaration'
+import { createCachedImport, neapolitanError } from './util'
 import type { Output } from './plugins/output'
 import type { OutputOption } from '.'
-import { neapolitanError } from './util'
+import { isTreeProxy } from './tree'
 
 export interface NeapolitanLoaderOptions {
   output: MaybeArray<OutputOption>
 }
 
 export interface NeapolitanLoader<Outputs extends Output[]> {
-  getPage: (
+  getFile: (
     slugs?: string | string[],
     subtree?: string
   ) => Promise<CombineOutputData<Outputs, 'transform'> | NullValue>
+  getFiles: (
+    subtree?: string
+  ) => Promise<CombineOutputData<Outputs, 'transform'>[]>
+  getSlugs: (subtree?: string) => Promise<string[]>
 }
 
-export const loader = async <const Options extends NeapolitanLoaderOptions>(
+export const loader = <const Options extends NeapolitanLoaderOptions>(
   options: Options
-): Promise<NeapolitanLoader<RawPlugins<Options['output']>>> => {
-  const ctx = await importCtx()
+): NeapolitanLoader<RawPlugins<Options['output']>> => {
+  const getCtx = createCachedImport(importCtx)
+  const getInput = createCachedImport(importInput)
+  const getOutput = createCachedImport(async () =>
+    createOutputContainer(await resolvePlugin(options.output))
+  )
 
-  let input: Awaited<ReturnType<typeof importInput>> | null = null
-  const getInput = async () => input ?? (input = await importInput())
+  const ensureCtx = async () => {
+    const ctx = await getCtx()
 
-  const output = createOutputContainer(await resolvePlugin(options.output))
-
-  if (ctx == null) {
-    neapolitanError(
-      new Error(
-        'context (module: neapolitan-ctx) is not initialized, are you using a Neapolitan plugin?'
+    if (ctx == null) {
+      neapolitanError(
+        new Error(
+          'context (module: neapolitan-ctx) is not initialized, are you using a Neapolitan plugin?'
+        )
       )
-    )
+    }
+  }
+
+  const getTreeNodes = async (subtree?: string) => {
+    await ensureCtx()
+
+    const input = await getInput()
+    const tree = subtree
+      ? input.tree.getTree(subtree) || input.tree.get(subtree)
+      : input.tree
+
+    if (!isTreeProxy(tree)) return []
+
+    const data = tree.toJSON()
+
+    return data.filter((item) => item.tree == null)
   }
 
   return {
-    getPage: async (preSlugs: string | string[] = [], subtree?: string) => {
+    getFile: async (preSlugs: string | string[] = [], subtree?: string) => {
+      await ensureCtx()
+
       const input = await getInput()
 
       const slugs =
@@ -55,6 +80,8 @@ export const loader = async <const Options extends NeapolitanLoaderOptions>(
       if (typeof load === 'function') {
         const source = await load()
         if (!source) return
+
+        const output = await getOutput()
 
         const handler = getHookHandler(output.transform)
         const result = await handler(slugs, source.code, {
@@ -69,6 +96,40 @@ export const loader = async <const Options extends NeapolitanLoaderOptions>(
       }
 
       return null
+    },
+    getFiles: async (subtree?: string) => {
+      const nodes = await getTreeNodes(subtree)
+      const pages = []
+
+      const loaders = nodes.map((item) => [item.key, item.value])
+
+      if (loaders.length === 0) return []
+
+      const output = await getOutput()
+
+      for (const [slug, load] of loaders) {
+        const source = await load()
+        if (!source) continue
+
+        const handler = getHookHandler(output.transform)
+        const result = await handler(slug.split('/'), source.code, {
+          moduleType: source.moduleType,
+        })
+
+        if (result != null && typeof result === 'object' && 'data' in result)
+          pages.push(
+            result.data as CombineOutputData<
+              RawPlugins<Options['output']>,
+              'transform'
+            >
+          )
+      }
+
+      return pages
+    },
+    getSlugs: async (subtree?: string) => {
+      const nodes = await getTreeNodes(subtree)
+      return nodes.map((item) => item.key)
     },
   }
 }
