@@ -1,11 +1,11 @@
 import '../runtime.d.ts'
 
+import type { ConfigLayerMeta, LoadConfigOptions } from 'c12'
 import type { Configuration, Resolver } from 'webpack'
 import { NEAPOLITAN_CTX_ID, NEAPOLITAN_INPUT_ID } from '../loaderutils'
 import type { NeapolitanConfig } from '../config'
 import type { NextConfig } from 'next'
 import { fileURLToPath } from 'node:url'
-import type { ConfigLayerMeta, LoadConfigOptions } from 'c12'
 import { getDefaultMode } from '../lib/plugin'
 
 export const defineConfig = (options: NeapolitanConfig): NeapolitanConfig =>
