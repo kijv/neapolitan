@@ -21,7 +21,9 @@ export default async function loader(
 
   if (isCtx || isInput || isSlug) {
     if (isCtx) {
-      const resolvedConfig = await cachedNeapolitanConfig.resolve(options)
+      const resolvedConfig = await cachedNeapolitanConfig.resolve(
+        options.config
+      )
       const { input: _input, output: _output, ...config } = resolvedConfig
 
       callback(
@@ -35,7 +37,9 @@ export default async function loader(
     }
 
     if (isInput || isSlug) {
-      const resolvedConfig = await cachedNeapolitanConfig.resolve(options)
+      const resolvedConfig = await cachedNeapolitanConfig.resolve(
+        options.config
+      )
 
       if (isInput) {
         const code = await generateNeapolitanInputCode(
@@ -73,7 +77,7 @@ export default async function loader(
 
   const id = this.resource
   const result = await loadAny(id, async () => {
-    const resolvedConfig = await cachedNeapolitanConfig.resolve(options)
+    const resolvedConfig = await cachedNeapolitanConfig.resolve(options.config)
     return createInputContainer(resolvedConfig.input)
   })
   if (result) {

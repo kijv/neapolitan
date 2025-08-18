@@ -5,6 +5,7 @@ import { NEAPOLITAN_CTX_ID, NEAPOLITAN_INPUT_ID } from '../loaderutils.ts'
 import type { NeapolitanConfig } from '../config'
 import type { NextConfig } from 'next'
 import { fileURLToPath } from 'node:url'
+import type { ConfigLayerMeta, LoadConfigOptions } from 'c12'
 
 export const defineConfig = (options: NeapolitanConfig): NeapolitanConfig =>
   options
@@ -12,25 +13,27 @@ export const defineConfig = (options: NeapolitanConfig): NeapolitanConfig =>
 const resolve = (id: string) => fileURLToPath(import.meta.resolve(id))
 
 export interface NeapolitanNextPluginOptions {
-  configPath?: string
+  config?: LoadConfigOptions<NeapolitanConfig, ConfigLayerMeta>
 }
 
 export const createNeapolitan = (
   options: NeapolitanNextPluginOptions = {}
 ): ((nextConfig?: NextConfig) => NextConfig) => {
   return <const T extends NextConfig>(nextConfig: T = {} as T) => {
-    const loaderOptions = {
-      configPath: options.configPath,
-    } as Record<string, string>
+    const loaderOptions = options as any
 
     const loadAndTransformLoaders = [
       {
-        loader: resolve('neapolitan/next/loader/load'),
-        options: loaderOptions,
+        loader: resolve('neapolitan/next/loader/general'),
+        options: Object.assign({}, loaderOptions, {
+          task: 'load',
+        }),
       },
       {
-        loader: resolve('neapolitan/next/loader/transform'),
-        options: loaderOptions,
+        loader: resolve('neapolitan/next/loader/general'),
+        options: Object.assign({}, loaderOptions, {
+          task: 'transform',
+        }),
       },
     ]
     const neapolitanLoader = {

@@ -46,25 +46,36 @@ export const loadNeapolitanConfigPath = (() => {
 })()
 
 export const cachedNeapolitanConfig = (() => {
-  let configPath: string | undefined = undefined
+  let cachedOptions: NeapolitanNextPluginOptions['config'] | undefined =
+    undefined
   let config: MaybePromise<NeapolitanConfig> | null = null
   let resolved: MaybePromise<ResolvedNeapolitanConfig> | null = null
 
-  const c12imp = async (configPath: string | undefined) =>
-    loadConfig<NeapolitanConfig>({
-      cwd: process.cwd(),
-      name: 'neapolitan',
-      configFile: configPath ?? 'neapolitan.config',
-    })
+  const imp = async (options?: NeapolitanNextPluginOptions['config']) =>
+    loadConfig<NeapolitanConfig>(
+      Object.assign(
+        {
+          cwd: process.cwd(),
+          configFile: 'neapolitan.config',
+        },
+        options,
+        {
+          name: 'neapolitan',
+        }
+      )
+    )
 
-  const load = async (options?: NeapolitanNextPluginOptions) => {
-    if (options?.configPath != null && options.configPath !== configPath) {
-      configPath = undefined
+  const load = async (options?: NeapolitanNextPluginOptions['config']) => {
+    if (
+      cachedOptions == null ||
+      (options != null && options !== cachedOptions)
+    ) {
+      cachedOptions = undefined
       config = null
       resolved = null
     }
     if (!config) {
-      config = c12imp(options?.configPath).then((module) => {
+      config = imp(options).then((module) => {
         config = module.config
         return module.config
       })
@@ -74,11 +85,11 @@ export const cachedNeapolitanConfig = (() => {
 
   return {
     load,
-    resolve: async (options?: NeapolitanNextPluginOptions) => {
+    resolve: async (options?: NeapolitanNextPluginOptions['config']) => {
       if (
-        configPath == null ||
+        cachedOptions == null ||
         config == null ||
-        (options?.configPath != null && options.configPath !== configPath)
+        (options != null && options !== cachedOptions)
       ) {
         await load(options)
       }
@@ -88,7 +99,7 @@ export const cachedNeapolitanConfig = (() => {
       return resolved!
     },
     clear: () => {
-      configPath = undefined
+      cachedOptions = undefined
       config = null
       resolved = null
     },
