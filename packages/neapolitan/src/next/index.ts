@@ -1,11 +1,12 @@
 import '../runtime.d.ts'
 
 import type { Configuration, Resolver } from 'webpack'
-import { NEAPOLITAN_CTX_ID, NEAPOLITAN_INPUT_ID } from '../loaderutils.ts'
+import { NEAPOLITAN_CTX_ID, NEAPOLITAN_INPUT_ID } from '../loaderutils'
 import type { NeapolitanConfig } from '../config'
 import type { NextConfig } from 'next'
 import { fileURLToPath } from 'node:url'
 import type { ConfigLayerMeta, LoadConfigOptions } from 'c12'
+import { getDefaultMode } from '../lib/plugin'
 
 export const defineConfig = (options: NeapolitanConfig): NeapolitanConfig =>
   options
@@ -19,8 +20,16 @@ export interface NeapolitanNextPluginOptions {
 export const createNeapolitan = (
   options: NeapolitanNextPluginOptions = {}
 ): ((nextConfig?: NextConfig) => NextConfig) => {
+  const mode = process.argv.includes('dev')
+    ? 'dev'
+    : process.argv.includes('build')
+      ? 'build'
+      : getDefaultMode()
+
   return <const T extends NextConfig>(nextConfig: T = {} as T) => {
-    const loaderOptions = options as any
+    const loaderOptions = Object.assign({}, options, {
+      mode,
+    }) as any
 
     const loadAndTransformLoaders = [
       {
