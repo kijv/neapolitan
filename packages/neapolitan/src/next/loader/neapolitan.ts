@@ -4,6 +4,7 @@ import {
   resolveInputSource,
 } from '../../lib/plugin'
 import type { LoaderContext } from 'webpack'
+import type { Mode } from '../../declaration'
 import type { NeapolitanNextPluginOptions } from '..'
 import { cachedNeapolitanConfig } from '../util'
 import { createInputContainer } from '../../plugins/input'
@@ -12,7 +13,7 @@ import { dataToEsm } from '@rollup/pluginutils'
 export default async function loader(
   this: LoaderContext<
     NeapolitanNextPluginOptions & {
-      mode: 'dev' | 'build' | string
+      mode: Mode
     }
   >
 ): Promise<void> {
@@ -52,7 +53,9 @@ export default async function loader(
 
         const code = await generateNeapolitanInputCode.call(
           {
-            watch: (id) => this.addDependency(id),
+            watch: (id) => {
+              this.addDependency(id)
+            },
           },
           resolvedConfig,
           () => createInputContainer(resolvedConfig.input),

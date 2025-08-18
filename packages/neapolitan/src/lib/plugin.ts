@@ -1,3 +1,4 @@
+import type { MaybePromise, Mode } from '../declaration'
 import type {
   ModuleType,
   ResolvedNeapolitanConfig,
@@ -9,7 +10,6 @@ import {
   transformFilterToFilterExprs,
 } from './hook-filter'
 import type { InputContainer } from '../plugins/input'
-import type { MaybePromise } from '../declaration'
 import { NEAPOLITAN_INPUT_ID } from '../loaderutils'
 import { dataToEsm } from '@rollup/pluginutils'
 import { getHookHandler } from '../plugins'
@@ -59,7 +59,7 @@ export async function generateNeapolitanInputCode(
   getInput: () => MaybePromise<InputContainer>,
   formatImport = (slug: string, moduleType: ModuleType) =>
     `${NEAPOLITAN_INPUT_ID}/${slug}?moduleType=${encodeURIComponent(moduleType)}`,
-  mode: 'dev' | 'build' | string
+  mode: Mode
 ): Promise<string> {
   const input = await getInput()
   const slugs = await input.slugs.collect()
