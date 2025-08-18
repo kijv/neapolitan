@@ -1,7 +1,7 @@
 declare module 'neapolitan-input' {
-  import type { TreeProxy } from 'neapolitan/tree'
+  import type { RawTreeData, TreeProxy } from 'neapolitan/tree'
 
-  export declare const tree: TreeProxy
+  export declare const tree: TreeProxy<RawTreeData>
 
   export default {
     tree,
