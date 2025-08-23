@@ -23,13 +23,16 @@ export type PluginBase<
       hook: (...args: any) => any
       filter: true | undefined
     }
+    resolveId: {
+      hook: (...args: any) => any
+      filter: true | undefined
+    }
   },
 > = Prettify<
   Omit<
     {
       name: string
       enforce?: 'pre' | 'post'
-    } & {
       load?: Config['load'] extends {
         hook: infer H extends (...args: any) => any
       }
@@ -40,7 +43,6 @@ export type PluginBase<
               : {}
           >
         : never
-    } & {
       transform?: Config['transform'] extends {
         hook: infer H extends (...args: any) => any
       }
@@ -48,6 +50,16 @@ export type PluginBase<
             H,
             Config['transform']['filter'] extends true
               ? HookFilterExtension<'transform'>
+              : {}
+          >
+        : never
+      resolveId?: Config['resolveId'] extends {
+        hook: infer H extends (...args: any) => any
+      }
+        ? ObjectHook<
+            H,
+            Config['resolveId']['filter'] extends true
+              ? HookFilterExtension<'resolveId'>
               : {}
           >
         : never
@@ -62,6 +74,11 @@ export type PluginBase<
       }
         ? never
         : 'transform')
+    | (Config['resolveId'] extends {
+        hook: (...args: any) => any
+      }
+        ? never
+        : 'resolveId')
   >
 >
 

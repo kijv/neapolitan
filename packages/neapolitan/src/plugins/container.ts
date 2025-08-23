@@ -7,12 +7,37 @@ import {
 import type { MaybePromise, PluginBase } from '../plugin'
 import type { ObjectHook } from 'rolldown'
 
-type ExtractHandler<Plugin extends PluginBase, K extends keyof Plugin> =
+type ExtractHandler<
+  Plugin extends Record<string, ObjectHook<any>>,
+  K extends keyof Plugin,
+> =
   Plugin[K] extends ObjectHook<infer H>
     ? NonNullable<H> extends (...args: any) => any
       ? NonNullable<H>
       : never
     : never
+
+type HandlerOnly<Plugin extends PluginBase<any>, K extends keyof Plugin> = (
+  ...args: Parameters<ExtractHandler<Plugin, K>>
+) => Promise<ReturnType<ExtractHandler<Plugin, K>>>
+
+export type PluginContainer<
+  Plugin extends PluginBase<{
+    load: {
+      hook: (...args: any) => any
+    }
+    transform: {
+      hook: (...args: any) => any
+    }
+    resolveId: {
+      hook: (...args: any) => any
+    }
+  }>,
+> = {
+  load: HandlerOnly<Plugin, 'load'>
+  transform: HandlerOnly<Plugin, 'transform'>
+  resolveId: HandlerOnly<Plugin, 'resolveId'>
+}
 
 export const createPluginContainer = <
   const Plugin extends PluginBase<{
@@ -20,6 +45,9 @@ export const createPluginContainer = <
       hook: (...args: any) => any
     }
     transform: {
+      hook: (...args: any) => any
+    }
+    resolveId: {
       hook: (...args: any) => any
     }
   }>,
@@ -30,8 +58,11 @@ export const createPluginContainer = <
     transform?: (
       ...args: Parameters<ExtractHandler<Plugin, 'transform'>>
     ) => FilterParams
+    resolveId?: (
+      ...args: Parameters<ExtractHandler<Plugin, 'resolveId'>>
+    ) => FilterParams
   } = {}
-): Required<Pick<Plugin, 'load' | 'transform'>> => {
+): PluginContainer<Plugin> => {
   const utils = createPluginHookUtils(plugins)
 
   const _processesing = new Set<Promise<any>>()
@@ -80,6 +111,26 @@ export const createPluginContainer = <
         if (result != null) return result
       }
 
+      return null
+    },
+    resolveId: async (
+      ...args: Parameters<ExtractHandler<Plugin, 'resolveId'>>
+    ) => {
+      for (const plugin of utils.getSortedPlugins('resolveId')) {
+        const filter = getCachedFilterForPlugin(plugin, 'resolveId')
+        if (
+          filter &&
+          filterArgs.resolveId &&
+          !filter(...filterArgs.resolveId(...args))
+        )
+          continue
+
+        const handler = getHookHandler(plugin.resolveId)
+        const result = await handleHookPromise<MaybePromise<any>>(
+          handler(...args)
+        )
+        if (result != null) return result
+      }
       return null
     },
   }

@@ -1,3 +1,4 @@
+import type { MaybePromise, Mode } from '../declaration'
 import type {
   ModuleType,
   ResolvedNeapolitanConfig,
@@ -9,7 +10,6 @@ import {
   transformFilterToFilterExprs,
 } from './hook-filter'
 import type { InputContainer } from '../plugins/input'
-import type { MaybePromise } from '../declaration'
 import { NEAPOLITAN_INPUT_ID } from '../loaderutils'
 import { dataToEsm } from '@rollup/pluginutils'
 import { getHookHandler } from '../plugins'
@@ -59,7 +59,7 @@ export async function generateNeapolitanInputCode(
   getInput: () => MaybePromise<InputContainer>,
   formatImport = (slug: string, moduleType: ModuleType) =>
     `${NEAPOLITAN_INPUT_ID}/${slug}?moduleType=${encodeURIComponent(moduleType)}`,
-  mode: 'dev' | 'build' | string
+  mode: Mode
 ): Promise<string> {
   const input = await getInput()
   const slugs = await input.slugs.collect()
@@ -80,17 +80,31 @@ export async function generateNeapolitanInputCode(
   return [
     'import { createTree } from "neapolitan/tree";',
     'const data = Object.freeze([',
-    ...slugs.map(({ id, slug, moduleType }) => {
-      const subtree = subtrees?.find((l) => l.filter(slug))
-      const importId = formatImport(slug, moduleType)
+    ...(await Promise.all(
+      slugs.map(async ({ id, slug, moduleType }) => {
+        const subtree = subtrees?.find((l) => l.filter(slug))
+        const importId = formatImport(slug, moduleType)
 
-      if (mode === 'dev') {
-        this.watch(id)
-        this.watch(importId)
-      }
+        if (mode === 'dev') {
+          const resolvedId = await input.slugs.resolveId?.(id)
 
-      return `\t{ tree: ${subtree?.key ? JSON.stringify(subtree.key) : 'undefined'}, key: ${JSON.stringify(subtree?.modifySlug ? subtree.modifySlug(slug) : slug)}, value: () => import(${JSON.stringify(importId)}).then(m => m.default) },`
-    }),
+          if (
+            resolvedId &&
+            (typeof resolvedId === 'string' ||
+              ('id' in resolvedId &&
+                (!resolvedId.external || resolvedId.external === 'absolute')))
+          ) {
+            this.watch(
+              typeof resolvedId === 'string' ? resolvedId : resolvedId.id
+            )
+          }
+
+          this.watch(importId)
+        }
+
+        return `\t{ tree: ${subtree?.key ? JSON.stringify(subtree.key) : 'undefined'}, key: ${JSON.stringify(subtree?.modifySlug ? subtree.modifySlug(slug) : slug)}, value: () => import(${JSON.stringify(importId)}).then(m => m.default) },`
+      })
+    )),
     ']);',
     'export const tree = createTree(data);',
     'export default {\n\ttree\n};',

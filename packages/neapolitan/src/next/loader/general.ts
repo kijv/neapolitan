@@ -1,4 +1,5 @@
 import type { LoaderContext } from 'webpack'
+import type { Mode } from '../../declaration'
 import type { NeapolitanNextPluginOptions } from '..'
 import { cachedNeapolitanConfig } from '../util'
 import { createInputContainer } from '../../plugins/input'
@@ -11,7 +12,7 @@ export default async function loader(
   this: LoaderContext<
     NeapolitanNextPluginOptions & {
       task: 'load' | 'transform'
-      mode: 'dev' | 'build' | string
+      mode: Mode
     }
   >,
   code: string
