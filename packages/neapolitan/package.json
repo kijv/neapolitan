@@ -1,7 +1,7 @@
 {
   "name": "neapolitan",
   "description": "Low-level content management system",
-  "version": "0.1.0-canary.1",
+  "version": "0.1.0-canary.2",
   "license": "BSD-2-Clause",
   "repository": {
     "type": "git",
