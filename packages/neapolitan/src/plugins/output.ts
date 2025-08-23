@@ -1,7 +1,7 @@
-import type { MaybePromise, Prettify } from '../declaration'
 import type { PluginBase, SourceResult } from '..'
+import { type PluginContainer, createPluginContainer } from './container'
+import type { MaybePromise } from '../declaration'
 import type { ModuleType } from 'rolldown'
-import { createPluginContainer } from './container'
 
 export type OutputTransformHook<Data> = (
   slugs: string[],
@@ -31,9 +31,11 @@ export interface Output<TOutputData extends OutputData = {}>
     }
   }> {}
 
+export type OutputContainer = Required<PluginContainer<Output>>
+
 export const createOutputContainer = <const TOutput extends Output>(
   output: TOutput[]
-): Prettify<Required<Pick<TOutput, 'transform'>>> => {
+): OutputContainer => {
   return {
     ...createPluginContainer(output as Output[], {
       transform: (slugs, code, meta) => [

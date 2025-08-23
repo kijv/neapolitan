@@ -11,6 +11,7 @@ import {
 } from './hook-filter'
 import type { InputContainer } from '../plugins/input'
 import { NEAPOLITAN_INPUT_ID } from '../loaderutils'
+import type { OutputContainer } from '../plugins/output'
 import { dataToEsm } from '@rollup/pluginutils'
 import { getHookHandler } from '../plugins'
 import { interpreter } from '@rolldown/pluginutils'
@@ -177,9 +178,9 @@ export const loadAny = async (
 export const transformAny = async (
   id: string,
   code: string,
-  getInput: () => MaybePromise<InputContainer>
+  getContainer: () => MaybePromise<InputContainer | OutputContainer>
 ) => {
-  const input = await getInput()
+  const input = await getContainer()
   const transformHook = normalizeHook(input.transform)
 
   if (

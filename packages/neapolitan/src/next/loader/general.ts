@@ -3,6 +3,7 @@ import type { Mode } from '../../declaration'
 import type { NeapolitanNextPluginOptions } from '..'
 import { cachedNeapolitanConfig } from '../util'
 import { createInputContainer } from '../../plugins/input'
+import { createOutputContainer } from '../../plugins/output'
 import { interpreter } from '@rolldown/pluginutils'
 import { loadFilterToFilterExprs } from '../../lib/hook-filter'
 import { normalizeHook } from '../../util'
@@ -23,10 +24,10 @@ export default async function loader(
   const id = this.resource
 
   if (options.task === 'load') {
-    const resolvedOptions = await cachedNeapolitanConfig.resolve(
+    const resolvedConfig = await cachedNeapolitanConfig.resolve(
       this.getOptions().config
     )
-    const resolvedInput = createInputContainer(resolvedOptions.input)
+    const resolvedInput = createInputContainer(resolvedConfig.input)
 
     const loadHook = normalizeHook(resolvedInput.load)
 
@@ -50,12 +51,32 @@ export default async function loader(
       return
     }
 
-    const result = await transformAny(id, code, async () => {
+    const inputResult = await transformAny(id, code, async () => {
       const resolvedConfig = await cachedNeapolitanConfig.resolve(
         options.config
       )
       return createInputContainer(resolvedConfig.input)
     })
+
+    const inputCode =
+      typeof inputResult === 'object' && inputResult != null
+        ? inputResult.code
+        : inputResult
+
+    const resolvedConfig = await cachedNeapolitanConfig.resolve(
+      this.getOptions().config
+    )
+
+    const result =
+      resolvedConfig.output != null
+        ? await transformAny(id, inputCode || code, async () => {
+            const resolvedConfig = await cachedNeapolitanConfig.resolve(
+              options.config
+            )
+            return createOutputContainer(resolvedConfig.output!)
+          })
+        : inputResult
+
     if (result) {
       callback(
         null,

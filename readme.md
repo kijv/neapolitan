@@ -26,6 +26,7 @@ transform: (id: string, code: string, meta: { moduleType: ModuleType }) => strin
 slugs.load: (slugs: string[]) => string | NullValue | { code: string, map?: /* ... */, moduleType?: ModuleType }
 slugs.transform: (slugs: string[], code: string, meta: { moduleType: ModuleType }) => string | NullValue | { code: string, map?: /* ... */, moduleType?: ModuleType }
 ```
+
 #### Input
 
 An input is a source of content that is eventually served into the output(s)
@@ -38,8 +39,8 @@ Neapolitan focuses on leveraging content through a slug system, meaning that fil
 
 > Every input requires the implementation of the `slugs.collect` method. This provides an initial set of "slugs" that Neapolitan should register when the user requests all or a single slug.
 
-`slugs.load` and `slugs.transform` are optional methods that determine the content of a slug. 
-It is recommended that you implement `slugs.load`, even though it is not required, if you want your source to determine said slug's content. 
+`slugs.load` and `slugs.transform` are optional methods that determine the content of a slug.
+It is recommended that you implement `slugs.load`, even though it is not required, if you want your source to determine said slug's content.
 The `slugs.transform` method allows you to modify other input's slugs or the current slug (depending on the `enforce` value, and if the current input loaded their own slugs via `slugs.load`)
 
 ##### Loading and Transforming

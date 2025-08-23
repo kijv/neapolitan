@@ -78,7 +78,9 @@ const neapolitanVitePlugin = ({
 
             const code = await generateNeapolitanInputCode.call(
               {
-                watch: (id) => this.addWatchFile(id),
+                watch: (id) => {
+                  this.addWatchFile(id)
+                },
               },
               resolvedConfig,
               getInput,
