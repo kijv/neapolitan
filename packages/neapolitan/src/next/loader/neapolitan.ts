@@ -10,7 +10,11 @@ import { createInputContainer } from '../../plugins/input'
 import { dataToEsm } from '@rollup/pluginutils'
 
 export default async function loader(
-  this: LoaderContext<NeapolitanNextPluginOptions>
+  this: LoaderContext<
+    NeapolitanNextPluginOptions & {
+      mode: 'dev' | 'build' | string
+    }
+  >
 ): Promise<void> {
   const options = this.getOptions()
   const callback = this.async()
@@ -42,11 +46,19 @@ export default async function loader(
       )
 
       if (isInput) {
-        const code = await generateNeapolitanInputCode(
+        if (options.mode === 'dev') {
+          this.addDependency(this.resource)
+        }
+
+        const code = await generateNeapolitanInputCode.call(
+          {
+            watch: (id) => this.addDependency(id),
+          },
           resolvedConfig,
           () => createInputContainer(resolvedConfig.input),
           (slug, moduleType) =>
-            `neapolitan/next?slug=/${encodeURIComponent(slug)}&moduleType=${encodeURIComponent(moduleType)}`
+            `neapolitan/next?slug=/${encodeURIComponent(slug)}&moduleType=${encodeURIComponent(moduleType)}`,
+          options.mode
         )
 
         callback(null, code)

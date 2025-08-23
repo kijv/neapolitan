@@ -11,6 +11,7 @@ export default async function loader(
   this: LoaderContext<
     NeapolitanNextPluginOptions & {
       task: 'load' | 'transform'
+      mode: 'dev' | 'build' | string
     }
   >,
   code: string

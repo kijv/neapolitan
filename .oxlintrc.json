@@ -8,6 +8,5 @@
     "no-duplicate-imports": "error",
     "sort-imports": "error",
     "no-await-in-loop": "allow"
-  },
-  "ignorePatterns": ["node_modules", "dist"]
+  }
 }

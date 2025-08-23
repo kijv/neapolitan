@@ -39,13 +39,9 @@
       "default": "./dist/next.js"
     },
     "./next?*": "./dist/next.js?*",
-    "./next/loader/load": {
-      "types": "./dist/next/loader/load.d.ts",
-      "default": "./dist/next/loader/load.js"
-    },
-    "./next/loader/transform": {
-      "types": "./dist/next/loader/transform.d.ts",
-      "default": "./dist/next/loader/transform.js"
+    "./next/loader/general": {
+      "types": "./dist/next/loader/general.d.ts",
+      "default": "./dist/next/loader/general.js"
     },
     "./next/loader/neapolitan": {
       "types": "./dist/next/loader/neapolitan.d.ts",

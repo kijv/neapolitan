@@ -42,12 +42,25 @@ export const isSourceDescription = <D>(
   return code && map && moduleType
 }
 
-export const generateNeapolitanInputCode = async (
+export interface DevContext {
+  watch: (id: string) => void
+}
+
+export const getDefaultMode = () =>
+  process.env.NODE_ENV === 'development'
+    ? 'dev'
+    : process.env.NODE_ENV !== 'production'
+      ? 'dev'
+      : 'build'
+
+export async function generateNeapolitanInputCode(
+  this: DevContext,
   resolvedConfig: ResolvedNeapolitanConfig,
   getInput: () => MaybePromise<InputContainer>,
   formatImport = (slug: string, moduleType: ModuleType) =>
-    `${NEAPOLITAN_INPUT_ID}/${slug}?moduleType=${encodeURIComponent(moduleType)}`
-): Promise<string> => {
+    `${NEAPOLITAN_INPUT_ID}/${slug}?moduleType=${encodeURIComponent(moduleType)}`,
+  mode: 'dev' | 'build' | string
+): Promise<string> {
   const input = await getInput()
   const slugs = await input.slugs.collect()
 
@@ -67,10 +80,16 @@ export const generateNeapolitanInputCode = async (
   return [
     'import { createTree } from "neapolitan/tree";',
     'const data = Object.freeze([',
-    ...slugs.map(({ slug, moduleType }) => {
+    ...slugs.map(({ id, slug, moduleType }) => {
       const subtree = subtrees?.find((l) => l.filter(slug))
+      const importId = formatImport(slug, moduleType)
 
-      return `\t{ tree: ${subtree?.key ? JSON.stringify(subtree.key) : 'undefined'}, key: ${JSON.stringify(subtree?.modifySlug ? subtree.modifySlug(slug) : slug)}, value: () => import(${JSON.stringify(formatImport(slug, moduleType))}).then(m => m.default) },`
+      if (mode === 'dev') {
+        this.watch(id)
+        this.watch(importId)
+      }
+
+      return `\t{ tree: ${subtree?.key ? JSON.stringify(subtree.key) : 'undefined'}, key: ${JSON.stringify(subtree?.modifySlug ? subtree.modifySlug(slug) : slug)}, value: () => import(${JSON.stringify(importId)}).then(m => m.default) },`
     }),
     ']);',
     'export const tree = createTree(data);',
