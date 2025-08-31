@@ -1,14 +1,15 @@
 import './runtime.d.ts'
 
-import { NEAPOLITAN_CTX_ID, NEAPOLITAN_INPUT_ID } from './loaderutils.ts'
+import { NEAPOLITAN_CTX_ID, NEAPOLITAN_INPUT_ID } from './loaderutils'
 import { type NeapolitanConfig, resolveNeapolitanConfig } from './config'
+import type { PluginOption, ResolvedConfig, ViteDevServer } from 'vite'
 import {
   generateNeapolitanInputCode,
+  getDefaultMode,
   loadAny,
   resolveInputSource,
   transformAny,
 } from './lib/plugin'
-import type { PluginOption } from 'vite'
 import { createInputContainer } from './plugins/input'
 import { dataToEsm } from '@rollup/pluginutils'
 
@@ -32,65 +33,93 @@ const neapolitanVitePlugin = ({
   const resolvedCtxId = `\0${NEAPOLITAN_CTX_ID}`
   const resolvedSrcId = `\0${NEAPOLITAN_INPUT_ID}`
 
-  return {
-    name: 'neapolitan',
-    resolveId(id) {
-      if (id === NEAPOLITAN_CTX_ID) return resolvedCtxId
-      if (id.startsWith(NEAPOLITAN_INPUT_ID))
-        return resolvedSrcId + id.slice(NEAPOLITAN_INPUT_ID.length)
+  let configResolved: ResolvedConfig | null = null
+  const servers: ViteDevServer[] = []
 
-      return null
+  const getMode = () =>
+    configResolved?.command === 'serve'
+      ? 'dev'
+      : configResolved?.command === 'build'
+        ? 'build'
+        : getDefaultMode()
+
+  return [
+    {
+      name: 'neapolitan:scan',
+      configResolved(config) {
+        configResolved = config
+      },
+      configureServer(server) {
+        servers.push(server)
+      },
     },
-    load: {
-      async handler(id) {
-        if (id === resolvedCtxId) {
-          const resolvedConfig = await getResolvedConfig()
-
-          return dataToEsm(resolvedConfig, {
-            preferConst: true,
-            namedExports: true,
-          })
-        }
-
-        if (id === resolvedSrcId) {
-          const resolvedConfig = await getResolvedConfig()
-
-          const code = await generateNeapolitanInputCode(
-            resolvedConfig,
-            getInput
-          )
-
-          return code
-        }
-
-        if (id.startsWith(resolvedSrcId)) {
-          const path = id.slice(resolvedSrcId.length + 1)
-          const moduleType = path
-            .match(/[?&]moduleType=[^?&]*\b/)?.[0]!
-            .replace(/^[?&]moduleType=/, '')
-          const slug = moduleType
-            ? path.replace(/[?&]moduleType=[^?&]*\b/, '')
-            : path
-
-          const code = await resolveInputSource(slug, moduleType, getInput)
-          if (code) return code
-        }
-
-        const result = await loadAny(id, getInput)
-        if (result) return result
+    {
+      name: 'neapolitan',
+      resolveId(id) {
+        if (id === NEAPOLITAN_CTX_ID) return resolvedCtxId
+        if (id.startsWith(NEAPOLITAN_INPUT_ID))
+          return resolvedSrcId + id.slice(NEAPOLITAN_INPUT_ID.length)
 
         return null
       },
-    },
-    transform: {
-      async handler(id, code) {
-        const result = await transformAny(id, code, getInput)
-        if (result) return result
+      load: {
+        async handler(id) {
+          if (id === resolvedCtxId) {
+            const resolvedConfig = await getResolvedConfig()
 
-        return null
+            return dataToEsm(resolvedConfig, {
+              preferConst: true,
+              namedExports: true,
+            })
+          }
+
+          if (id === resolvedSrcId) {
+            const resolvedConfig = await getResolvedConfig()
+
+            const code = await generateNeapolitanInputCode.call(
+              {
+                watch: (id) => {
+                  this.addWatchFile(id)
+                },
+              },
+              resolvedConfig,
+              getInput,
+              undefined,
+              getMode()
+            )
+
+            return code
+          }
+
+          if (id.startsWith(resolvedSrcId)) {
+            const path = id.slice(resolvedSrcId.length + 1)
+            const moduleType = path
+              .match(/[?&]moduleType=[^?&]*\b/)?.[0]!
+              .replace(/^[?&]moduleType=/, '')
+            const slug = moduleType
+              ? path.replace(/[?&]moduleType=[^?&]*\b/, '')
+              : path
+
+            const code = await resolveInputSource(slug, moduleType, getInput)
+            if (code) return code
+          }
+
+          const result = await loadAny(id, getInput)
+          if (result) return result
+
+          return null
+        },
+      },
+      transform: {
+        async handler(id, code) {
+          const result = await transformAny(id, code, getInput)
+          if (result) return result
+
+          return null
+        },
       },
     },
-  } satisfies PluginOption
+  ] satisfies PluginOption
 }
 
 export const neapolitan: typeof neapolitanVitePlugin = neapolitanVitePlugin

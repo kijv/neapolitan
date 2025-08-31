@@ -4,13 +4,18 @@ import {
   resolveInputSource,
 } from '../../lib/plugin'
 import type { LoaderContext } from 'webpack'
+import type { Mode } from '../../declaration'
 import type { NeapolitanNextPluginOptions } from '..'
 import { cachedNeapolitanConfig } from '../util'
 import { createInputContainer } from '../../plugins/input'
 import { dataToEsm } from '@rollup/pluginutils'
 
 export default async function loader(
-  this: LoaderContext<NeapolitanNextPluginOptions>
+  this: LoaderContext<
+    NeapolitanNextPluginOptions & {
+      mode: Mode
+    }
+  >
 ): Promise<void> {
   const options = this.getOptions()
   const callback = this.async()
@@ -21,7 +26,9 @@ export default async function loader(
 
   if (isCtx || isInput || isSlug) {
     if (isCtx) {
-      const resolvedConfig = await cachedNeapolitanConfig.resolve(options)
+      const resolvedConfig = await cachedNeapolitanConfig.resolve(
+        options.config
+      )
       const { input: _input, output: _output, ...config } = resolvedConfig
 
       callback(
@@ -35,14 +42,26 @@ export default async function loader(
     }
 
     if (isInput || isSlug) {
-      const resolvedConfig = await cachedNeapolitanConfig.resolve(options)
+      const resolvedConfig = await cachedNeapolitanConfig.resolve(
+        options.config
+      )
 
       if (isInput) {
-        const code = await generateNeapolitanInputCode(
+        if (options.mode === 'dev') {
+          this.addDependency(this.resource)
+        }
+
+        const code = await generateNeapolitanInputCode.call(
+          {
+            watch: (id) => {
+              this.addDependency(id)
+            },
+          },
           resolvedConfig,
           () => createInputContainer(resolvedConfig.input),
           (slug, moduleType) =>
-            `neapolitan/next?slug=/${encodeURIComponent(slug)}&moduleType=${encodeURIComponent(moduleType)}`
+            `neapolitan/next?slug=/${encodeURIComponent(slug)}&moduleType=${encodeURIComponent(moduleType)}`,
+          options.mode
         )
 
         callback(null, code)
@@ -73,7 +92,7 @@ export default async function loader(
 
   const id = this.resource
   const result = await loadAny(id, async () => {
-    const resolvedConfig = await cachedNeapolitanConfig.resolve(options)
+    const resolvedConfig = await cachedNeapolitanConfig.resolve(options.config)
     return createInputContainer(resolvedConfig.input)
   })
   if (result) {

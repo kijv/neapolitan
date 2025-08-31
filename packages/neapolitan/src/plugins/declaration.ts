@@ -17,6 +17,10 @@ export type PluginBaseConfig = {
     hook: (...args: any) => any
     filter?: boolean | undefined
   }
+  resolveId?: {
+    hook: (...args: any) => any
+    filter?: boolean | undefined
+  }
 }
 
 export type RawPlugins<T extends PluginOption<PluginBase<any>>> =

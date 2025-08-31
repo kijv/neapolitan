@@ -1,3 +1,4 @@
+import type { MaybePromise, Mode } from '../declaration'
 import type {
   ModuleType,
   ResolvedNeapolitanConfig,
@@ -9,8 +10,8 @@ import {
   transformFilterToFilterExprs,
 } from './hook-filter'
 import type { InputContainer } from '../plugins/input'
-import type { MaybePromise } from '../declaration'
 import { NEAPOLITAN_INPUT_ID } from '../loaderutils'
+import type { OutputContainer } from '../plugins/output'
 import { dataToEsm } from '@rollup/pluginutils'
 import { getHookHandler } from '../plugins'
 import { interpreter } from '@rolldown/pluginutils'
@@ -42,12 +43,25 @@ export const isSourceDescription = <D>(
   return code && map && moduleType
 }
 
-export const generateNeapolitanInputCode = async (
+export interface DevContext {
+  watch: (id: string) => void
+}
+
+export const getDefaultMode = () =>
+  process.env.NODE_ENV === 'development'
+    ? 'dev'
+    : process.env.NODE_ENV !== 'production'
+      ? 'dev'
+      : 'build'
+
+export async function generateNeapolitanInputCode(
+  this: DevContext,
   resolvedConfig: ResolvedNeapolitanConfig,
   getInput: () => MaybePromise<InputContainer>,
   formatImport = (slug: string, moduleType: ModuleType) =>
-    `${NEAPOLITAN_INPUT_ID}/${slug}?moduleType=${encodeURIComponent(moduleType)}`
-): Promise<string> => {
+    `${NEAPOLITAN_INPUT_ID}/${slug}?moduleType=${encodeURIComponent(moduleType)}`,
+  mode: Mode
+): Promise<string> {
   const input = await getInput()
   const slugs = await input.slugs.collect()
 
@@ -67,11 +81,31 @@ export const generateNeapolitanInputCode = async (
   return [
     'import { createTree } from "neapolitan/tree";',
     'const data = Object.freeze([',
-    ...slugs.map(({ slug, moduleType }) => {
-      const subtree = subtrees?.find((l) => l.filter(slug))
+    ...(await Promise.all(
+      slugs.map(async ({ id, slug, moduleType }) => {
+        const subtree = subtrees?.find((l) => l.filter(slug))
+        const importId = formatImport(slug, moduleType)
 
-      return `\t{ tree: ${subtree?.key ? JSON.stringify(subtree.key) : 'undefined'}, key: ${JSON.stringify(subtree?.modifySlug ? subtree.modifySlug(slug) : slug)}, value: () => import(${JSON.stringify(formatImport(slug, moduleType))}).then(m => m.default) },`
-    }),
+        if (mode === 'dev') {
+          const resolvedId = await input.slugs.resolveId?.(id)
+
+          if (
+            resolvedId &&
+            (typeof resolvedId === 'string' ||
+              ('id' in resolvedId &&
+                (!resolvedId.external || resolvedId.external === 'absolute')))
+          ) {
+            this.watch(
+              typeof resolvedId === 'string' ? resolvedId : resolvedId.id
+            )
+          }
+
+          this.watch(importId)
+        }
+
+        return `\t{ tree: ${subtree?.key ? JSON.stringify(subtree.key) : 'undefined'}, key: ${JSON.stringify(subtree?.modifySlug ? subtree.modifySlug(slug) : slug)}, value: () => import(${JSON.stringify(importId)}).then(m => m.default) },`
+      })
+    )),
     ']);',
     'export const tree = createTree(data);',
     'export default {\n\ttree\n};',
@@ -144,9 +178,9 @@ export const loadAny = async (
 export const transformAny = async (
   id: string,
   code: string,
-  getInput: () => MaybePromise<InputContainer>
+  getContainer: () => MaybePromise<InputContainer | OutputContainer>
 ) => {
-  const input = await getInput()
+  const input = await getContainer()
   const transformHook = normalizeHook(input.transform)
 
   if (
