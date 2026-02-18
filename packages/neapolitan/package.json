@@ -8,9 +8,6 @@
     "url": "git+https://github.com/kijv/neapolitan.git",
     "directory": "packages/neapolitan"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "files": [
     "dist"
   ],
@@ -51,6 +48,9 @@
       "types": "./dist/vite.d.ts",
       "default": "./dist/vite.js"
     }
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "rm -rf dist && BUILD=1 rolldown -m -c rolldown.config.ts",

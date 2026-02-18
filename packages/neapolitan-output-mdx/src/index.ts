@@ -1,21 +1,25 @@
-import { type Compiler, type CompilerOptions, createCompiler } from './compiler'
-import type { Output } from 'neapolitan'
+import {
+  type Compiler,
+  type CompilerOptions,
+  createCompiler,
+} from './compiler';
+import type { Output } from 'neapolitan';
 
-export { pluginOption } from './util'
+export { pluginOption } from './util';
 
 export interface MdxOutputOptions {
-  compiler?: CompilerOptions
+  compiler?: CompilerOptions;
 }
 
 export const mdx = (
-  options: MdxOutputOptions = {}
+  options: MdxOutputOptions = {},
 ): Output<{
-  transform: ReturnType<Compiler['render']>
+  transform: ReturnType<Compiler['render']>;
 }> => {
-  let compiler: Compiler | undefined
+  let compiler: Compiler | undefined;
 
   const getCompiler = () =>
-    compiler ?? (compiler = createCompiler(options.compiler))
+    compiler ?? (compiler = createCompiler(options.compiler));
 
   return {
     name: 'mdx',
@@ -24,18 +28,18 @@ export const mdx = (
         moduleType: ['md', 'mdx'],
       },
       handler: async (_, text) => {
-        const compiler = getCompiler()
+        const compiler = getCompiler();
 
-        const code = await compiler.compile(text)
-        const module = compiler.render(code)
+        const code = await compiler.compile(text);
+        const module = compiler.render(code);
 
         return {
           code,
           data: module,
-        }
+        };
       },
     },
-  }
-}
+  };
+};
 
-export default mdx
+export default mdx;

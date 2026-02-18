@@ -1,7 +1,7 @@
-import type { CompilerOptions, ResolvePlugins } from './compiler'
-import type { CompileOptions } from '@mdx-js/mdx'
-import type { Pluggable } from 'unified'
-import { remarkMdxExport } from './plugins/remark-export'
+import type { CompilerOptions, ResolvePlugins } from './compiler';
+import type { CompileOptions } from '@mdx-js/mdx';
+import type { Pluggable } from 'unified';
+import { remarkMdxExport } from './plugins/remark-export';
 
 export const resolveOptions = ({
   valuesToExport = [],
@@ -21,38 +21,38 @@ export const resolveOptions = ({
           },
         ],
       ],
-      options.remarkPlugins
+      options.remarkPlugins,
     ),
     rehypePlugins: pluginOption((v) => [...v], options.rehypePlugins),
-  }
-}
+  };
+};
 
 export const pluginOption = (
   def: (v: Pluggable[]) => (Pluggable | false)[],
-  options: ResolvePlugins = []
+  options: ResolvePlugins = [],
 ): Pluggable[] => {
   const list = def(Array.isArray(options) ? options : []).filter(
-    Boolean
-  ) as Pluggable[]
+    Boolean,
+  ) as Pluggable[];
 
   if (typeof options === 'function') {
-    return options(list)
+    return options(list);
   }
 
-  return list
-}
+  return list;
+};
 
 export const createCachedImport = <T>(
-  imp: () => Promise<T>
+  imp: () => Promise<T>,
 ): (() => T | Promise<T>) => {
-  let cached: T | Promise<T>
+  let cached: T | Promise<T>;
   return () => {
     if (!cached) {
       cached = imp().then((module) => {
-        cached = module
-        return module
-      })
+        cached = module;
+        return module;
+      });
     }
-    return cached
-  }
-}
+    return cached;
+  };
+};

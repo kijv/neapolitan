@@ -1,13 +1,13 @@
-import { NODE_EXTERNAL, createOutput, getInput } from '../../rolldownutils.mjs'
-import { defineConfig } from 'rolldown'
-import { dts } from 'rolldown-plugin-dts'
-import { exports } from './package.json'
-import { minify } from 'rollup-plugin-swc3'
-import path from 'node:path'
+import { NODE_EXTERNAL, createOutput, getInput } from '../../rolldownutils.mjs';
+import { defineConfig } from 'rolldown';
+import { dts } from 'rolldown-plugin-dts';
+import { exports } from './package.json';
+import { minify } from 'rollup-plugin-swc3';
+import path from 'node:path';
 
-const src = path.join(import.meta.dirname, 'src')
+const src = path.join(import.meta.dirname, 'src');
 
-const input = await getInput(exports, src)
+const input = await getInput(exports, src);
 
 const baseConfig = defineConfig({
   input,
@@ -29,12 +29,12 @@ const baseConfig = defineConfig({
       id.startsWith('@mdx-js/mdx') ||
       id.startsWith('react')
     ) {
-      return true
+      return true;
     }
 
-    return false
+    return false;
   },
-})
+});
 
 export default defineConfig([
   {
@@ -56,4 +56,4 @@ export default defineConfig([
         : null,
     ],
   },
-])
+]);

@@ -9,7 +9,7 @@ npm install neapolitan-input-local
 ## Usage
 
 ```js
-import local from 'neapolitan-input-local'
+import local from 'neapolitan-input-local';
 
 // within some neapolitan config
 {
@@ -19,6 +19,6 @@ import local from 'neapolitan-input-local'
       // root -- defaults to process.cwd()
       // filter -- specify certain conditions for including/excluding files from property 'dir'
     }),
-  ]
+  ];
 }
 ```
