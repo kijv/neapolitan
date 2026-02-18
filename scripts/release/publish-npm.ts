@@ -27,7 +27,7 @@ async function getTag({
 
   if (existsSync(preConfigPath)) {
     const { tag, mode } = JSON.parse(
-      (await readFile(preConfigPath, 'utf-8')).toString('utf-8'),
+      (await readFile(preConfigPath, 'utf-8')).toString(),
     );
     if (mode === 'pre') {
       if (!version.includes('-')) {
