@@ -1,31 +1,31 @@
-import type { MaybePromise, Mode } from '../declaration'
+import type { MaybePromise, Mode } from '../declaration';
 import type {
   ModuleType,
   ResolvedNeapolitanConfig,
   SourceDescription,
-} from '..'
+} from '..';
 import {
   generalHookFilterMatcherToFilterExprs,
   loadFilterToFilterExprs,
   transformFilterToFilterExprs,
-} from './hook-filter'
-import type { InputContainer } from '../plugins/input'
-import { NEAPOLITAN_INPUT_ID } from '../loaderutils'
-import type { OutputContainer } from '../plugins/output'
-import { dataToEsm } from '@rollup/pluginutils'
-import { getHookHandler } from '../plugins'
-import { interpreter } from '@rolldown/pluginutils'
-import { normalizeHook } from '../util'
-import path from 'node:path'
+} from './hook-filter';
+import type { InputContainer } from '../plugins/input';
+import { NEAPOLITAN_INPUT_ID } from '../loaderutils';
+import type { OutputContainer } from '../plugins/output';
+import { dataToEsm } from '@rollup/pluginutils';
+import { getHookHandler } from '../plugins';
+import { interpreter } from '@rolldown/pluginutils';
+import { normalizeHook } from '../util';
+import path from 'node:path';
 
 export const isSourceDescription = <D>(
-  obj: unknown
+  obj: unknown,
 ): obj is SourceDescription & {
-  data?: D
+  data?: D;
 } => {
-  if (obj == null || typeof obj !== 'object') return false
+  if (obj == null || typeof obj !== 'object') return false;
 
-  const code = 'code' in obj && typeof obj.code === 'string'
+  const code = 'code' in obj && typeof obj.code === 'string';
   const map =
     'map' in obj
       ? typeof obj.map === 'string' ||
@@ -34,17 +34,17 @@ export const isSourceDescription = <D>(
           'mappings' in obj.map &&
           obj.map.mappings != null &&
           typeof obj.map.mappings === 'string')
-      : true
+      : true;
   const moduleType =
     'moduleType' in obj
       ? obj.moduleType != null && typeof obj.moduleType === 'string'
-      : true
+      : true;
 
-  return code && map && moduleType
-}
+  return code && map && moduleType;
+};
 
 export interface DevContext {
-  watch: (id: string) => void
+  watch: (id: string) => void;
 }
 
 export const getDefaultMode = () =>
@@ -52,7 +52,7 @@ export const getDefaultMode = () =>
     ? 'dev'
     : process.env.NODE_ENV !== 'production'
       ? 'dev'
-      : 'build'
+      : 'build';
 
 export async function generateNeapolitanInputCode(
   this: DevContext,
@@ -60,10 +60,10 @@ export async function generateNeapolitanInputCode(
   getInput: () => MaybePromise<InputContainer>,
   formatImport = (slug: string, moduleType: ModuleType) =>
     `${NEAPOLITAN_INPUT_ID}/${slug}?moduleType=${encodeURIComponent(moduleType)}`,
-  mode: Mode
+  mode: Mode,
 ): Promise<string> {
-  const input = await getInput()
-  const slugs = await input.slugs.collect()
+  const input = await getInput();
+  const slugs = await input.slugs.collect();
 
   const subtrees = Object.entries(resolvedConfig.splitting ?? {}).map(
     ([key, { filter, modifySlug }]) => ({
@@ -72,22 +72,22 @@ export async function generateNeapolitanInputCode(
         interpreter(
           generalHookFilterMatcherToFilterExprs(filter, 'id')!,
           undefined,
-          id
+          id,
         ),
       modifySlug,
-    })
-  )
+    }),
+  );
 
   return [
     'import { createTree } from "neapolitan/tree";',
     'const data = Object.freeze([',
     ...(await Promise.all(
       slugs.map(async ({ id, slug, moduleType }) => {
-        const subtree = subtrees?.find((l) => l.filter(slug))
-        const importId = formatImport(slug, moduleType)
+        const subtree = subtrees?.find((l) => l.filter(slug));
+        const importId = formatImport(slug, moduleType);
 
         if (mode === 'dev') {
-          const resolvedId = await input.slugs.resolveId?.(id)
+          const resolvedId = await input.slugs.resolveId?.(id);
 
           if (
             resolvedId &&
@@ -96,39 +96,39 @@ export async function generateNeapolitanInputCode(
                 (!resolvedId.external || resolvedId.external === 'absolute')))
           ) {
             this.watch(
-              typeof resolvedId === 'string' ? resolvedId : resolvedId.id
-            )
+              typeof resolvedId === 'string' ? resolvedId : resolvedId.id,
+            );
           }
 
-          this.watch(importId)
+          this.watch(importId);
         }
 
-        return `\t{ tree: ${subtree?.key ? JSON.stringify(subtree.key) : 'undefined'}, key: ${JSON.stringify(subtree?.modifySlug ? subtree.modifySlug(slug) : slug)}, value: () => import(${JSON.stringify(importId)}).then(m => m.default) },`
-      })
+        return `\t{ tree: ${subtree?.key ? JSON.stringify(subtree.key) : 'undefined'}, key: ${JSON.stringify(subtree?.modifySlug ? subtree.modifySlug(slug) : slug)}, value: () => import(${JSON.stringify(importId)}).then(m => m.default) },`;
+      }),
     )),
     ']);',
     'export const tree = createTree(data);',
     'export default {\n\ttree\n};',
-  ].join('\n')
+  ].join('\n');
 }
 
 export const resolveInputSource = async (
   slugOrSlugs: string | string[],
   moduleType: ModuleType | undefined,
-  getInput: () => MaybePromise<InputContainer>
+  getInput: () => MaybePromise<InputContainer>,
 ) => {
   const slugs = Array.isArray(slugOrSlugs)
     ? slugOrSlugs
-    : slugOrSlugs.split('/')
+    : slugOrSlugs.split('/');
 
-  const input = await getInput()
-  const load = input.slugs.load
+  const input = await getInput();
+  const load = input.slugs.load;
 
   if (load) {
-    const handler = getHookHandler(load)
-    const result = await handler(slugs)
+    const handler = getHookHandler(load);
+    const result = await handler(slugs);
 
-    if (!result) return
+    if (!result) return;
 
     return dataToEsm(
       typeof result === 'string'
@@ -141,29 +141,29 @@ export const resolveInputSource = async (
               {
                 moduleType,
               },
-              result
+              result,
             )
           : result,
       {
         namedExports: true,
         preferConst: true,
-      }
-    )
+      },
+    );
   }
-}
+};
 
 export const loadAny = async (
   id: string,
-  getInput: () => MaybePromise<InputContainer>
+  getInput: () => MaybePromise<InputContainer>,
 ) => {
-  const input = await getInput()
-  const loadHook = normalizeHook(input.load)
+  const input = await getInput();
+  const loadHook = normalizeHook(input.load);
 
   if (
     !loadHook.filter ||
     interpreter(loadFilterToFilterExprs(loadHook.filter)!, undefined, id)
   ) {
-    const desc = await loadHook.handler(id)
+    const desc = await loadHook.handler(id);
 
     return typeof desc === 'object' && desc != null
       ? {
@@ -171,31 +171,31 @@ export const loadAny = async (
           map:
             desc.map != null && typeof desc.map === 'string' ? desc.map : null,
         }
-      : desc
+      : desc;
   }
-}
+};
 
 export const transformAny = async (
   id: string,
   code: string,
-  getContainer: () => MaybePromise<InputContainer | OutputContainer>
+  getContainer: () => MaybePromise<InputContainer | OutputContainer>,
 ) => {
-  const input = await getContainer()
-  const transformHook = normalizeHook(input.transform)
+  const input = await getContainer();
+  const transformHook = normalizeHook(input.transform);
 
   if (
     transformHook.filter &&
     !interpreter(
       transformFilterToFilterExprs(transformHook.filter)!,
       undefined,
-      id
+      id,
     )
   )
-    return
+    return;
 
   const result = await transformHook.handler(id, code, {
     moduleType: path.extname(id).slice(1),
-  })
+  });
 
   return typeof result === 'object' && result != null
     ? {
@@ -205,5 +205,5 @@ export const transformAny = async (
             ? result.map
             : null,
       }
-    : result
-}
+    : result;
+};

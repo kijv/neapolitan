@@ -19,8 +19,8 @@ With Vite:
 vite.config.js
 
 ```js
-import { defineConfig } from 'vite'
-import neapolitan from 'neapolitan/vite'
+import { defineConfig } from 'vite';
+import neapolitan from 'neapolitan/vite';
 
 export default defineConfig({
   plugins: [
@@ -30,7 +30,7 @@ export default defineConfig({
       ],
     }),
   ],
-})
+});
 ```
 
 With Next.js:
@@ -38,25 +38,25 @@ With Next.js:
 next.config.mjs
 
 ```js
-import createNeapolitan from 'neapolitan/next'
+import createNeapolitan from 'neapolitan/next';
 
-const withNeapolitan = createNeapolitan()
+const withNeapolitan = createNeapolitan();
 
 const nextConfig = {
   /* ... */
-}
+};
 
-export default withNeapolitan(nextConfig)
+export default withNeapolitan(nextConfig);
 ```
 
 neapolitan.config.mjs
 
 ```js
-import { defineConfig } from 'neapolitan/next'
+import { defineConfig } from 'neapolitan/next';
 
 export default defineConfig({
   input: [
     /* inputs */
   ],
-})
+});
 ```

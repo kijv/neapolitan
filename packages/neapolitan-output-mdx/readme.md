@@ -9,7 +9,7 @@ npm install neapolitan-output-mdx
 ## Usage
 
 ```js
-import mdx from 'neapolitan-output-mdx'
+import mdx from 'neapolitan-output-mdx';
 
 // within some neapolitan config
 {
@@ -17,6 +17,6 @@ import mdx from 'neapolitan-output-mdx'
     mdx({
       // compiler -- pass additional options to the MDX compiler
     }),
-  ]
+  ];
 }
 ```
