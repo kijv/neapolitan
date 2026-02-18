@@ -1,18 +1,15 @@
 {
   "name": "neapolitan-input-local",
+  "version": "0.1.0-canary.1",
   "description": "Local input plugin for Neapolitan",
   "keywords": [
     "neapolitan-plugin"
   ],
-  "version": "0.1.0-canary.1",
   "license": "BSD-2-Clause",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kijv/neapolitan.git",
     "directory": "packages/neapolitan-input-local"
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "files": [
     "dist"
@@ -23,6 +20,9 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     }
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "rm -rf dist && BUILD=1 rolldown -m -c rolldown.config.ts",

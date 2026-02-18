@@ -1,18 +1,15 @@
 {
   "name": "neapolitan-output-mdx",
+  "version": "0.1.0-canary.1",
   "description": "MDX output plugin for Neapolitan",
   "keywords": [
     "neapolitan-plugin"
   ],
-  "version": "0.1.0-canary.1",
   "license": "BSD-2-Clause",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kijv/neapolitan.git",
     "directory": "packages/neapolitan-output-mdx"
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "files": [
     "dist"
@@ -27,6 +24,9 @@
       "types": "./dist/compiler.d.ts",
       "default": "./dist/compiler.js"
     }
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "rm -rf dist && BUILD=1 rolldown -m -c rolldown.config.ts",

@@ -1,74 +1,75 @@
-import type { MaybePromise, NullValue, Prettify } from '../declaration'
-import type { PluginBase, SourceResult } from '..'
-import { type PluginContainer, createPluginContainer } from './container'
-import type { ModuleType } from 'rolldown'
-import { neapolitanError } from '../util'
+import type { MaybePromise, NullValue, Prettify } from '../declaration';
+import type { PluginBase, SourceResult } from '..';
+import { type PluginContainer, createPluginContainer } from './container';
+import type { ModuleType } from 'rolldown';
+import { neapolitanError } from '../util';
 
 interface PartialResolvedId {
-  external?: boolean | 'absolute' | 'relative'
-  id: string
+  external?: boolean | 'absolute' | 'relative';
+  id: string;
 }
 
-export type ResolveIdResult = string | NullValue | false | PartialResolvedId
+export type ResolveIdResult = string | NullValue | false | PartialResolvedId;
 
 export interface SlugDescription {
-  id: string
-  slug: string
-  moduleType: ModuleType
+  id: string;
+  slug: string;
+  moduleType: ModuleType;
 }
 
-export type InputLoadHook = (id: string) => MaybePromise<SourceResult>
+export type InputLoadHook = (id: string) => MaybePromise<SourceResult>;
 
 export type InputTransformHook = (
   id: string,
   code: string,
   meta: {
-    moduleType: ModuleType
-  }
-) => MaybePromise<SourceResult>
+    moduleType: ModuleType;
+  },
+) => MaybePromise<SourceResult>;
 
-export type InputSlugsLoadHook = (slugs: string[]) => MaybePromise<SourceResult>
+export type InputSlugsLoadHook = (
+  slugs: string[],
+) => MaybePromise<SourceResult>;
 
 export type InputSlugsTransformHook = (
   slugs: string[],
   code: string,
   meta: {
-    moduleType: ModuleType
-  }
-) => MaybePromise<SourceResult>
+    moduleType: ModuleType;
+  },
+) => MaybePromise<SourceResult>;
 
-export type InputSlugsResolveIdHook = (id: string) => ResolveIdResult
+export type InputSlugsResolveIdHook = (id: string) => ResolveIdResult;
 
-export interface Input
-  extends PluginBase<{
-    load: {
-      hook: InputLoadHook
-      filter: true
-    }
-    transform: {
-      hook: InputTransformHook
-      filter: true
-    }
-  }> {
+export interface Input extends PluginBase<{
+  load: {
+    hook: InputLoadHook;
+    filter: true;
+  };
+  transform: {
+    hook: InputTransformHook;
+    filter: true;
+  };
+}> {
   slugs: Prettify<
     {
-      collect: () => MaybePromise<Array<SlugDescription>>
+      collect: () => MaybePromise<Array<SlugDescription>>;
     } & Pick<
       PluginBase<{
         load: {
-          hook: InputSlugsLoadHook
-        }
+          hook: InputSlugsLoadHook;
+        };
         transform: {
-          hook: InputSlugsTransformHook
-        }
+          hook: InputSlugsTransformHook;
+        };
         resolveId: {
-          hook: InputSlugsResolveIdHook
-          filter: true
-        }
+          hook: InputSlugsResolveIdHook;
+          filter: true;
+        };
       }>,
       'load' | 'transform' | 'resolveId'
     >
-  >
+  >;
 }
 
 export type InputContainer = Required<
@@ -76,13 +77,13 @@ export type InputContainer = Required<
     slugs: Prettify<
       PluginContainer<
         Input['slugs'] & {
-          name: string
+          name: string;
         }
       > &
         Pick<Input['slugs'], 'collect'>
-    >
+    >;
   }
->
+>;
 
 export const createInputContainer = (inputs: Input[]): InputContainer => {
   const inputSlugs = inputs.map((input) => {
@@ -91,25 +92,25 @@ export const createInputContainer = (inputs: Input[]): InputContainer => {
       load: input.slugs.load,
       transform: input.slugs.transform,
       resolveId: input.slugs.resolveId,
-    }
-  })
+    };
+  });
 
   return {
     slugs: {
       collect: async () => {
-        const slugs = new Set<SlugDescription>()
+        const slugs = new Set<SlugDescription>();
 
         for (const input of inputs) {
           try {
             for (const slug of await input.slugs.collect()) {
-              slugs.add(slug)
+              slugs.add(slug);
             }
           } catch (e) {
-            neapolitanError(e, ` [input: ${input.name}]`)
+            neapolitanError(e, ` [input: ${input.name}]`);
           }
         }
 
-        return Array.from(slugs)
+        return Array.from(slugs);
       },
       ...createPluginContainer(inputSlugs, {
         resolveId: (id) => [undefined, id, undefined],
@@ -119,5 +120,5 @@ export const createInputContainer = (inputs: Input[]): InputContainer => {
       load: (id) => [undefined, id, undefined],
       transform: (id, code, meta) => [code, id, meta.moduleType],
     }),
-  }
-}
+  };
+};

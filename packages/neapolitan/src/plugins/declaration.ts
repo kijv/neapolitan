@@ -3,34 +3,34 @@ import type {
   ElementOf,
   NullValue,
   UnionToIntersection,
-} from '../declaration'
-import type { Output, OutputData } from '..'
-import type { PluginBase, PluginOption } from '../plugin'
-import type { AsyncFlatten } from '../util'
+} from '../declaration';
+import type { Output, OutputData } from '..';
+import type { PluginBase, PluginOption } from '../plugin';
+import type { AsyncFlatten } from '../util';
 
 export type PluginBaseConfig = {
   load?: {
-    hook: (...args: any) => any
-    filter?: boolean | undefined
-  }
+    hook: (...args: any) => any;
+    filter?: boolean | undefined;
+  };
   transform?: {
-    hook: (...args: any) => any
-    filter?: boolean | undefined
-  }
+    hook: (...args: any) => any;
+    filter?: boolean | undefined;
+  };
   resolveId?: {
-    hook: (...args: any) => any
-    filter?: boolean | undefined
-  }
-}
+    hook: (...args: any) => any;
+    filter?: boolean | undefined;
+  };
+};
 
 export type RawPlugins<T extends PluginOption<PluginBase<any>>> =
   AsyncFlatten<Arraify<T>> extends infer R
     ? R extends (infer U)[]
       ? U[]
       : never
-    : never
+    : never;
 
-type IsEmpty<T extends readonly any[]> = T extends [] ? true : false
+type IsEmpty<T extends readonly any[]> = T extends [] ? true : false;
 
 type ExtractOutputData<
   Outputs extends Output[],
@@ -40,12 +40,12 @@ type ExtractOutputData<
     ? TStringKind extends keyof OutputData
       ? D[TStringKind]
       : D
-    : never
-}
+    : never;
+};
 
 type DefaultOutputData = {
-  transform?: undefined
-}
+  transform?: undefined;
+};
 
 export type CombineOutputData<
   TOutputs extends Output[],
@@ -59,10 +59,10 @@ export type CombineOutputData<
         UnionToIntersection<
           Awaited<ElementOf<ExtractOutputData<TOutputs, TStringKind>>>
         >
-      >
+      >;
 
 type OutputDataOrDefault<T> = T extends
   | OutputData
   | OutputData[keyof OutputData]
   ? T
-  : DefaultOutputData
+  : DefaultOutputData;

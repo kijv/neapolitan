@@ -1,98 +1,98 @@
-import { type FilterPattern, createFilter } from '@rollup/pluginutils'
-import type { InputOption, ModuleType } from 'neapolitan'
-import type { GeneralHookFilter } from 'rolldown'
-import { collectFiles } from './util'
-import fs from 'node:fs/promises'
-import { packageDirectorySync } from 'package-directory'
-import path from 'node:path'
+import { type FilterPattern, createFilter } from '@rollup/pluginutils';
+import type { InputOption, ModuleType } from 'neapolitan';
+import type { GeneralHookFilter } from 'rolldown';
+import { collectFiles } from './util';
+import fs from 'node:fs/promises';
+import { packageDirectorySync } from 'package-directory';
+import path from 'node:path';
 
 export interface LocalInputOptions {
-  root?: string
-  dir: string
-  filter?: GeneralHookFilter
+  root?: string;
+  dir: string;
+  filter?: GeneralHookFilter;
 }
 
 const normalizeFilter = (
-  filter: GeneralHookFilter | undefined
+  filter: GeneralHookFilter | undefined,
 ): {
-  include?: FilterPattern
-  exclude?: FilterPattern
+  include?: FilterPattern;
+  exclude?: FilterPattern;
 } => {
   if (filter instanceof RegExp) {
     return {
       include: filter,
-    }
+    };
   }
 
   if (typeof filter === 'object' && !Array.isArray(filter)) {
-    return filter
+    return filter;
   }
 
   if (Array.isArray(filter)) {
     return {
       include: filter,
-    }
+    };
   }
 
   return {
     include: filter ?? '**/*',
-  }
-}
+  };
+};
 
 export const local = (options: LocalInputOptions): InputOption => {
-  const cwd = packageDirectorySync() ?? process.cwd()
-  const root = options.root ? path.relative(cwd, options.root) : cwd
-  const dir = path.relative(root, options.dir)
+  const cwd = packageDirectorySync() ?? process.cwd();
+  const root = options.root ? path.relative(cwd, options.root) : cwd;
+  const dir = path.relative(root, options.dir);
 
-  const filter = normalizeFilter(options.filter)
+  const filter = normalizeFilter(options.filter);
 
   const idFilter = createFilter(filter.include, filter.exclude, {
     resolve: dir,
-  })
+  });
 
   let slugsCache: Map<
     string,
     {
-      id: string
-      moduleType: ModuleType
+      id: string;
+      moduleType: ModuleType;
     }
-  > | null = null
-  let collectedFiles: string[] | null = null
+  > | null = null;
+  let collectedFiles: string[] | null = null;
 
   const getFiles = async (force = false) => {
-    if (!force && collectedFiles) return collectedFiles
+    if (!force && collectedFiles) return collectedFiles;
 
-    const files: string[] = []
+    const files: string[] = [];
     for await (const id of collectFiles(path.relative(cwd, dir), idFilter)) {
-      files.push(id)
+      files.push(id);
     }
-    return (collectedFiles = files)
-  }
+    return (collectedFiles = files);
+  };
 
   const idToSlug = (id: string) => {
-    const ext = path.extname(id)
+    const ext = path.extname(id);
     const slug =
       path.basename(id, ext) === 'index'
         ? path.dirname(id)
-        : id.slice(0, -ext.length)
+        : id.slice(0, -ext.length);
 
-    return slug === '.' ? '' : slug
-  }
+    return slug === '.' ? '' : slug;
+  };
 
   return {
     name: 'neapolitan:local',
     slugs: {
       collect: async (force = false) => {
         if (!slugsCache || force) {
-          slugsCache = new Map()
+          slugsCache = new Map();
 
           for (const id of await getFiles(force)) {
-            const relative = path.relative(dir, id)
-            const slug = idToSlug(relative)
+            const relative = path.relative(dir, id);
+            const slug = idToSlug(relative);
             slugsCache.set(slug, {
               id: relative,
               moduleType: path.extname(id).slice(1),
-            })
+            });
           }
         }
 
@@ -101,34 +101,34 @@ export const local = (options: LocalInputOptions): InputOption => {
             {
               slug,
             },
-            rest
-          )
-        )
+            rest,
+          ),
+        );
       },
       load: async (slugs) => {
-        const slug = slugs.join('/')
+        const slug = slugs.join('/');
 
         const filter = createFilter(
           [new RegExp(`${slug}/index.[^.]*$`), new RegExp(`${slug}.[^.]*$`)],
           [],
           {
             resolve: false,
-          }
-        )
+          },
+        );
 
         for (const id of await getFiles()) {
           if (filter(path.relative(dir, id))) {
             const text = await fs.readFile(path.relative(cwd, id), {
               encoding: 'utf8',
-            })
-            return text.toString()
+            });
+            return text.toString();
           }
         }
 
-        return null
+        return null;
       },
     },
-  }
-}
+  };
+};
 
-export default local
+export default local;
