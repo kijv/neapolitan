@@ -2,9 +2,13 @@
   "mode": "pre",
   "tag": "canary",
   "initialVersions": {
-    "neapolitan": "0.1.0-canary.1",
+    "neapolitan": "0.1.0-canary.2",
     "neapolitan-input-local": "0.1.0-canary.1",
     "neapolitan-output-mdx": "0.1.0-canary.1"
   },
-  "changesets": ["few-ideas-eat", "public-symbols-sneeze"]
+  "changesets": [
+    "few-ideas-eat",
+    "public-symbols-sneeze",
+    "tasty-pandas-march"
+  ]
 }
