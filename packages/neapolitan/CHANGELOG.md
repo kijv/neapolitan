@@ -1,5 +1,11 @@
 # neapolitan
 
+## 0.1.0-canary.3
+
+### Patch Changes
+
+- [#12](https://github.com/kijv/neapolitan/pull/12) [`ae0ec68`](https://github.com/kijv/neapolitan/commit/ae0ec68182be644d64fd08ed7c74c9e443e49c52) Thanks [@kijv](https://github.com/kijv)! - dev mode
+
 ## 0.1.0-canary.2
 
 ### Patch Changes
