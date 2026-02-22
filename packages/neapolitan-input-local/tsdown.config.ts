@@ -10,4 +10,5 @@ export default defineConfig({
   external: m.builtinModules.concat(
     m.builtinModules.map((mod) => `node:${mod}`),
   ),
+  inlineOnly: false,
 });

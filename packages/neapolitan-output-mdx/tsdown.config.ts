@@ -13,6 +13,7 @@ export default defineConfig({
     )[]
   ).concat([/@mdx-js\/mdx(\/.*)?/, /react(\/.*)?/]),
   entry: 'src/*.ts',
+  inlineOnly: false,
   outputOptions: {
     codeSplitting: {
       groups: [
