@@ -59,6 +59,9 @@ importers:
       c12:
         specifier: ^3.2.0
         version: 3.3.3
+      webpack:
+        specifier: ^5.105.2
+        version: 5.105.2
     devDependencies:
       '@rolldown/pluginutils':
         specifier: 'catalog:'
@@ -75,9 +78,6 @@ importers:
       vite:
         specifier: ^7
         version: 7.3.1(@types/node@25.3.0)(jiti@2.6.1)(terser@5.46.0)(tsx@4.21.0)
-      webpack:
-        specifier: ^5.105.2
-        version: 5.105.2
 
   packages/neapolitan-input-local:
     devDependencies:
