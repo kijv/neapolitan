@@ -1,3 +1,5 @@
 import { publish } from '@vitejs/release-scripts';
 
-await publish({ defaultPackage: 'neapolitan', packageManager: 'pnpm' });
+publish({ defaultPackage: 'neapolitan', packageManager: 'pnpm' }).catch((e) => {
+  throw e;
+});

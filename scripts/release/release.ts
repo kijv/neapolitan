@@ -2,7 +2,7 @@ import { generateChangelog, release } from '@vitejs/release-scripts';
 import colors from 'picocolors';
 import { logRecentCommits } from './util';
 
-await release({
+release({
   repo: 'neapolitan',
   packages: ['neapolitan', 'neapolitan-input-local', 'neapolitan-output-mdx'],
   toTag: (pkg, version) =>
@@ -16,4 +16,6 @@ await release({
       tagPrefix: pkgName === 'neapolitan' ? undefined : `${pkgName}@`,
     });
   },
+}).catch((e) => {
+  throw e;
 });
