@@ -1,7 +1,6 @@
-import fs from 'node:fs/promises';
+import { type Options as ExecaOptions, type ResultPromise, execa } from 'execa';
 import colors from 'picocolors';
-import type { Options as ExecaOptions, ResultPromise } from 'execa';
-import { execa } from 'execa';
+import fs from 'node:fs/promises';
 
 function run<EO extends ExecaOptions>(
   bin: string,

@@ -2,7 +2,7 @@
   "name": "neapolitan-project",
   "private": true,
   "scripts": {
-    "lint": "oxlint",
+    "lint": "oxlint --type-aware",
     "lint:fix": "oxlint --fix",
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
@@ -10,10 +10,12 @@
     "ci-publish": "tsx scripts/ci-publish.ts"
   },
   "devDependencies": {
+    "@typescript/native-preview": "7.0.0-dev.20260221.1",
     "oxfmt": "^0.33.0",
     "oxlint": "^1.12.0",
     "oxlint-tsgolint": "latest",
     "rolldown": "^1.0.0-rc.5",
+    "rolldown-plugin-dts": "0.14.2",
     "tsdown": "^0.20.3",
     "tsx": "^4.21.0",
     "turbo": "^2.8.10"
