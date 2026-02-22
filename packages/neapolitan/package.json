@@ -64,18 +64,21 @@
     "@rollup/pluginutils": "catalog:",
     "next": "^16",
     "remeda": "^2.30.0",
-    "vite": "^7",
-    "webpack": "^5.105.2"
+    "vite": "^7"
   },
   "peerDependencies": {
     "next": "^15.4.6",
-    "vite": "^7"
+    "vite": "^7",
+    "webpack": "^5.105.2"
   },
   "peerDependenciesMeta": {
     "next": {
       "optional": true
     },
     "vite": {
+      "optional": true
+    },
+    "webpack": {
       "optional": true
     }
   }
