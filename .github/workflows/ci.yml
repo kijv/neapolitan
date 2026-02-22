@@ -1,14 +1,24 @@
 name: CI
 
+permissions: {}
+
 on:
-  push:
-    branches: ['main']
+  workflow_dispatch:
   pull_request:
     types: [opened, synchronize]
+    branches-ignore:
+      - '**/graphite-base/**'
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.ref_name != 'main' }}
 
 env:
-  TURBO_VERSION: 2.5.5
-  NODE_LTS_VERSION: 20
+  TURBO_VERSION: 2.8.10
+  NODE_LTS_VERSION: 24
   BUN_VERSION: 1.3.9
 
 jobs:
@@ -16,22 +26,11 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: taiki-e/checkout-action@3ab630d442e198ebb0ca30872832406ca01c46eb # v1.4.0
+      - uses: oxc-project/setup-node@8958a8e040102244b619c4a94fccb657a44b1c21 # v1.0.6
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ env.BUN_VERSION }}
-
-      - name: Install dependencies
-        run: bun install
-
-      - name: Lint
-        run: bun run lint --type-aware --deny-warnings
-
-      - name: Check formatting
-        run: bun run fmt:check
+      - run: nr lint --type-aware --deny-warnings
+      - run: pnpm fmt:check
 
   build:
     name: Build and Test
@@ -42,10 +41,8 @@ jobs:
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
 
     steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 25
+      - uses: taiki-e/checkout-action@3ab630d442e198ebb0ca30872832406ca01c46eb # v1.4.0
+      - uses: oxc-project/setup-node@8958a8e040102244b619c4a94fccb657a44b1c21 # v1.0.6
 
       - name: Cache turbo build setup
         uses: actions/cache@v4
@@ -55,21 +52,5 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-turbo-
 
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ env.BUN_VERSION }}
-
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_LTS_VERSION }}
-          check-latest: true
-
-      - name: Install dependencies
-        run: bun install
-
-      - name: Build
-        run: bun run build
-
-      - name: Test
-        run: bun test
+      - run: pnpm build
+      - run: pnpm test

@@ -53,21 +53,17 @@
     "access": "public"
   },
   "scripts": {
-    "build": "rm -rf dist && BUILD=1 rolldown -m -c rolldown.config.ts",
-    "dev": "rolldown -c rolldown.config.ts --watch"
+    "build": "tsdown --minify",
+    "dev": "tsdown --watch"
   },
   "dependencies": {
     "c12": "^3.2.0"
   },
   "devDependencies": {
-    "@rolldown/pluginutils": "catalog:bundler",
-    "@rollup/pluginutils": "catalog:bundler",
+    "@rolldown/pluginutils": "catalog:",
+    "@rollup/pluginutils": "catalog:",
     "next": "^15.4.6",
     "remeda": "^2.30.0",
-    "rolldown": "catalog:bundler",
-    "rolldown-plugin-dts": "catalog:bundler",
-    "rollup": "^4.46.2",
-    "rollup-plugin-swc3": "catalog:bundler",
     "vite": "^7",
     "webpack": "^5.101.2"
   },

@@ -175,6 +175,16 @@ export const loadAny = async (
   }
 };
 
+/**
+ * Transform from either an input or output container. The container is
+ * InputContainer | OutputContainer, so input.transform is a union of two
+ * hook types: InputTransformHook (id: string, ...) and OutputTransformHook
+ * (slugs: string[], ...). For a union of functions, parameter types are
+ * contravariant: TypeScript requires arguments valid for every member, so
+ * Parameters<F1 | F2> = Parameters<F1> & Parameters<F2>. That makes the
+ * first parameter an intersection (e.g. string & string[]) instead of a
+ * union (string | string[]).
+ */
 export const transformAny = async (
   id: string,
   code: string,
@@ -193,9 +203,14 @@ export const transformAny = async (
   )
     return;
 
-  const result = await transformHook.handler(id, code, {
-    moduleType: path.extname(id).slice(1),
-  });
+  const result = await transformHook.handler(
+    // @ts-expect-error
+    id,
+    code,
+    {
+      moduleType: path.extname(id).slice(1),
+    },
+  );
 
   return typeof result === 'object' && result != null
     ? {
