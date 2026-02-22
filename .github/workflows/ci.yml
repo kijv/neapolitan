@@ -16,11 +16,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name }}-${{ github.event.pull_request.number || github.sha }}
   cancel-in-progress: ${{ github.ref_name != 'main' }}
 
-env:
-  TURBO_VERSION: 2.8.10
-  NODE_LTS_VERSION: 24
-  BUN_VERSION: 1.3.9
-
 jobs:
   lint:
     name: Lint
