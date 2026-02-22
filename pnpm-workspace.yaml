@@ -1,0 +1,12 @@
+packages:
+  - packages/*
+  - scripts/*
+
+catalog:
+  '@rolldown/pluginutils': 1.0.0-rc.5
+  '@rollup/pluginutils': latest
+
+patchedDependencies:
+  '@vitejs/release-scripts': patches/@vitejs__release-scripts.patch
+
+verifyDepsBeforeRun: install

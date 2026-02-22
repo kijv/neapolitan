@@ -32,10 +32,10 @@
       "default": "./dist/loader.js"
     },
     "./next": {
-      "types": "./dist/next.d.ts",
-      "default": "./dist/next.js"
+      "types": "./dist/next/index.d.ts",
+      "default": "./dist/next/index.js"
     },
-    "./next?*": "./dist/next.js?*",
+    "./next?*": "./dist/next/index.js?*",
     "./next/loader/general": {
       "types": "./dist/next/loader/general.d.ts",
       "default": "./dist/next/loader/general.js"
@@ -53,33 +53,33 @@
     "access": "public"
   },
   "scripts": {
-    "build": "rm -rf dist && BUILD=1 rolldown -m -c rolldown.config.ts",
-    "dev": "rolldown -c rolldown.config.ts --watch"
+    "build": "tsdown --minify",
+    "dev": "tsdown --watch",
+    "test": "vitest"
   },
   "dependencies": {
     "c12": "^3.2.0"
   },
   "devDependencies": {
-    "@rolldown/pluginutils": "catalog:bundler",
-    "@rollup/pluginutils": "catalog:bundler",
-    "next": "^15.4.6",
+    "@rolldown/pluginutils": "catalog:",
+    "@rollup/pluginutils": "catalog:",
+    "next": "^16",
     "remeda": "^2.30.0",
-    "rolldown": "catalog:bundler",
-    "rolldown-plugin-dts": "catalog:bundler",
-    "rollup": "^4.46.2",
-    "rollup-plugin-swc3": "catalog:bundler",
-    "vite": "^7",
-    "webpack": "^5.101.2"
+    "vite": "^7"
   },
   "peerDependencies": {
     "next": "^15.4.6",
-    "vite": "^7"
+    "vite": "^7",
+    "webpack": "^5.105.2"
   },
   "peerDependenciesMeta": {
     "next": {
       "optional": true
     },
     "vite": {
+      "optional": true
+    },
+    "webpack": {
       "optional": true
     }
   }

@@ -1,0 +1,29 @@
+name: Publish Package
+
+on:
+  push:
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - 'input-*'
+      - 'output-*'
+
+jobs:
+  publish:
+    # prevents this action from running on forks
+    if: github.repository == 'kijv/neapolitan'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    environment: Release
+    steps:
+      - uses: taiki-e/checkout-action@3ab630d442e198ebb0ca30872832406ca01c46eb # v1.4.0
+      - uses: oxc-project/setup-node@8958a8e040102244b619c4a94fccb657a44b1c21 # v1.0.6
+
+      - name: Disallow installation scripts
+        run: yq '.onlyBuiltDependencies = []' -i pnpm-workspace.yaml
+
+      - name: Publish package
+        run: npm i -g npm@^11.5.2 && pnpm run ci:publish "$REF_NAME"
+        env:
+          REF_NAME: ${{ github.ref_name }}
