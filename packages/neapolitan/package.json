@@ -54,7 +54,8 @@
   },
   "scripts": {
     "build": "tsdown --minify",
-    "dev": "tsdown --watch"
+    "dev": "tsdown --watch",
+    "test": "vitest"
   },
   "dependencies": {
     "c12": "^3.2.0"
